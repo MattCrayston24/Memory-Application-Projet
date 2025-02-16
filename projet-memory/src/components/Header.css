@@ -1,38 +1,134 @@
 /* /src/components/Header.css */
 
+/* Styles globaux pour le header */
 .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #3272b6; /* Couleur personnalisée du header */
+    color: white;
+    z-index: 1000;
+    padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: #2267b1;
-    color: white;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Légère ombre pour donner du relief */
   }
   
-  .logo img {
-    height: 40px;  /* Ajuste la taille du logo */
-  }
-  
-  h1 {
-    font-size: 1.5rem;
-    margin: 0;
-    font-style: none;
-  }
-  
-  nav ul {
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
-    gap: 15px;
-    font-style: none;
+    justify-content: space-between;
+    align-items: center;
   }
   
-  nav a {
-    color: white;
+  /* Logo */
+  .logo img {
+    height: 40px; /* Taille du logo */
+  }
+  
+  /* Titre */
+  .title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    flex-grow: 1;
+    margin: 0;
+  }
+  
+  /* Menu burger */
+  .burger-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none; /* Cacher le bouton burger sur les grands écrans */
+  }
+  
+  .burger-btn img {
+    width: 30px;
+    height: 30px;
+  }
+  
+  /* Menu de navigation */
+  .nav-menu {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-link {
     text-decoration: none;
-    font-weight: bold;
-    font-style: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color 0.3s ease;
   }
   
-  nav a:hover {
-    text-decoration: underline;
+  .nav-link:hover {
+    color: #f1f1f1; /* Couleur au survol */
+  }
+  
+  /* Styles du menu burger lorsqu'il est ouvert */
+  .nav-menu.open {
+    display: flex;
+  }
+  
+  @media (max-width: 768px) {
+    /* Le menu burger devient visible sur les petits écrans */
+    .burger-btn {
+      display: block;
+    }
+  
+    /* Menu en colonne sur les petits écrans */
+    .nav-menu {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 30%;
+      background-color: #3272b6;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      border-radius: 5%;
+      transition: right 0.3s ease;
+    }
+  
+    /* Animation pour faire glisser le menu */
+    .nav-menu.open {
+      right: 0;
+    }
+  
+    /* Liens dans le menu burger */
+    .nav-menu ul {
+      list-style: none;
+      padding: 0;
+      width: 100%;
+    }
+  
+    .nav-menu li {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .title{
+        font-size: 1.2rem;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    /* Menu horizontal sur les grands écrans */
+    .nav-menu {
+      display: flex;
+      gap: 20px;
+    }
+  
+    .nav-menu.open {
+      display: flex;
+    }
   }
   
