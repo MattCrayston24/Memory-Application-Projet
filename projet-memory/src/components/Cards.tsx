@@ -1,6 +1,6 @@
 // /src/components/Cards.tsx
 import { useState } from 'react';
-import './Cards.css';
+import './cards.css';
 
 export interface Card {
   id: number;
@@ -101,9 +101,17 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
                     placeholder="Votre réponse"
                     onClick={(e) => e.stopPropagation()}
                   />
-                  <button onClick={(e) => { e.stopPropagation(); handleReview(card.id); }}>Valider</button>
-                  <button onClick={(e) => { e.stopPropagation(); handleEdit(card); }}>Éditer</button>
-                  <button onClick={(e) => { e.stopPropagation(); handleDelete(card.id); }}>Supprimer</button>
+                  <div className="button-group">
+                    <button onClick={(e) => { e.stopPropagation(); handleReview(card.id); }}>
+                      Valider
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); handleEdit(card); }}>
+                      Éditer
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); handleDelete(card.id); }}>
+                      Supprimer
+                    </button>
+                  </div>
                 </div>
               </>
             )}

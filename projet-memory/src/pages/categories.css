@@ -1,137 +1,177 @@
 /* /src/pages/Categories.css */
 
-/* Style de base et typographie */
+/* Importation de la police (optionnel) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f9f9f9;
-    color: #333;
-  }
-  
-  /* Conteneur principal de la page */
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9f9f9;
+  color: #333;
+}
+
+/* Conteneur principal de la page */
+.page-categories {
+  padding: 125px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Titre principal centré */
+.page-categories h1 {
+  font-size: 3rem;
+  margin-bottom: 40px;
+  text-align: center;
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Bouton pour ajouter une catégorie, centré */
+.btn-add-category {
+  display: block;
+  margin: 0 auto 40px;
+  padding: 12px 20px;
+  background: #3272b6;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-add-category:hover {
+  background: #285a91;
+}
+
+/* Liste des catégories : toujours en une seule colonne sur PC */
+.categories-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+/* Style de chaque catégorie */
+.category-item {
+  background: linear-gradient(135deg, #3272b6, #4b90d5);
+  color: #fff;
+  border-radius: 15px;
+  padding: 25px 20px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.category-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* En-tête de catégorie : titre centré et boutons en ligne */
+.category-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.category-header h2 {
+  font-size: 1.8rem;
+  margin: 0 0 10px 0;
+}
+
+/* Boutons en ligne sous le titre */
+.category-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: center;
+}
+
+.category-buttons button {
+  padding: 5px 8px; /* Taille réduite */
+  border: none;
+  background: #fff;
+  color: #3272b6;
+  border-radius: 5px;
+  font-size: 0.85rem; /* Taille réduite */
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.category-buttons button:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+/* Description de la catégorie */
+.category-item p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 15px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .page-categories {
-    padding: 50px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+    padding: 70px 15px;
   }
-  
-  /* Titre principal */
   .page-categories h1 {
-    font-size: 3rem;
-    margin-bottom: 40px;
-    text-align: center;
-    color: #333;
+    font-size: 2.2rem;
   }
-  
-  /* Conteneur des cartes (grid responsive) */
-  .categories-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
+  .categories-list {
+    gap: 20px;
+    grid-template-columns: 1fr;
   }
-  
-  /* Style de la carte de catégorie */
-  .category-card {
-    background: linear-gradient(135deg, #3272b6, #4b90d5);
-    color: #fff;
-    border-radius: 15px;
-    padding: 30px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    position: relative;
-    overflow: hidden;
+  .category-item {
+    padding: 18px 15px;
   }
-  
-  /* Hover effect sur la carte */
-  .category-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  .category-header h2 {
+    font-size: 1.6rem;
   }
-  
-  /* Titres et paragraphes dans la carte */
-  .category-card h2 {
-    font-size: 1.75rem;
-    margin-bottom: 15px;
+  .category-buttons {
+    flex-direction: row; /* Reste en ligne */
+    gap: 6px; /* Réduit l'écart */
   }
-  
-  .category-card p {
-    font-size: 1.1rem;
-    line-height: 1.5;
+  .category-buttons button {
+    padding: 4px 7px; /* Taille encore un peu réduite */
+    font-size: 0.8rem;
   }
-  
-  /* Styles pour la face flip (face arrière) */
-  .category-card.flipped {
-    background: #fff;
-    color: #333;
-    transform: rotateY(180deg);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
-  }
-  
-  .category-card .card-front,
-  .category-card .card-back {
-    backface-visibility: hidden;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
-  }
-  
-  /* Face arrière de la carte (affichage de la question et réponse) */
-  .category-card .card-back {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 30px;
-    background: #fff;
-    color: #333;
-    border-radius: 15px;
-    transform: rotateY(180deg);
-  }
-  
-  .category-card .card-back p {
-    margin-bottom: 20px;
-  }
-  
-  .category-card .card-back input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  .btn-add-category {
     font-size: 1rem;
+    padding: 10px 16px;
   }
-  
-  .category-card .card-back button {
-    padding: 10px 20px;
-    border: none;
-    background: #3272b6;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    margin-right: 10px;
+}
+
+@media (max-width: 480px) {
+  .page-categories {
+    padding: 50px 10px;
   }
-  
-  .category-card .card-back button:hover {
-    background: #285a91;
+  .page-categories h1 {
+    font-size: 1.8rem;
   }
-  
-  /* Responsive : ajustements pour mobiles */
-  @media (max-width: 768px) {
-    .page-categories h1 {
-      font-size: 2.5rem;
-    }
-    .category-card {
-      padding: 20px;
-    }
-    .category-card h2 {
-      font-size: 1.5rem;
-    }
-    .category-card p {
-      font-size: 1rem;
-    }
+  .categories-list {
+    gap: 15px;
+    grid-template-columns: 1fr;
   }
-  
+  .category-item {
+    padding: 15px 10px;
+  }
+  .category-header h2 {
+    font-size: 1.4rem;
+  }
+  .category-buttons {
+    flex-direction: row; /* Toujours en ligne */
+    gap: 5px;
+  }
+  .category-buttons button {
+    padding: 3px 6px; /* Encore plus compact */
+    font-size: 0.75rem;
+  }
+  .btn-add-category {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+}

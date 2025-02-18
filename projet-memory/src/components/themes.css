@@ -12,7 +12,7 @@
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
   .theme-header {
@@ -73,5 +73,38 @@
   
   .theme-edit button:hover {
     background: #285a91;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .theme-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .theme-header p {
+      margin: 10px 0;
+      font-size: 0.9rem;
+    }
+    .theme-header button {
+      margin: 5px 0;
+      padding: 6px 10px;
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .theme-header h2 {
+      font-size: 1.3rem;
+    }
+    .theme-header p {
+      font-size: 0.8rem;
+    }
+    .theme-header button {
+      padding: 5px 8px;
+      font-size: 0.8rem;
+    }
+    .theme {
+      padding: 15px;
+    }
   }
   
