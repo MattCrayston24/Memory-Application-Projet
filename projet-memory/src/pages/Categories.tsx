@@ -1,156 +1,119 @@
 // /src/pages/Categories.tsx
 import { useState, useEffect } from 'react';
-import './Categories.css';
+import Themes, { Theme } from '../components/Themes';
+import './categories.css';
 
-interface Category {
-  id: number;
-  name: string;
-  description: string;
-  lastReviewed: string | null;
-  interval: number; // en minutes
-  question: string;
-  answer: string;
+export interface CategoryData {
+id: number;
+name: string;
+description: string;
+themes: Theme[];
 }
 
-const initialCategories: Category[] = [
-  {
-    id: 1,
-    name: 'Anglais',
-    description: 'Révisez vos connaissances en anglais.',
-    lastReviewed: null,
-    interval: 1,
-    question: 'How do you say "chat" in English?',
-    answer: 'cat'
-  },
-  {
-    id: 2,
-    name: 'Français',
-    description: 'Explorez la langue française.',
-    lastReviewed: null,
-    interval: 1,
-    question: 'Quel est le synonyme de "rapide"?',
-    answer: 'vite'
-  },
-  {
-    id: 3,
-    name: 'Mathématiques',
-    description: 'Testez vos compétences en mathématiques.',
-    lastReviewed: null,
-    interval: 1,
-    question: 'Combien font 2 + 2 ?',
-    answer: '4'
-  },
+const initialCategories: CategoryData[] = [
+{
+  id: 1,
+  name: 'Langues',
+  description: 'Catégorie pour les langues.',
+  themes: [
+    {
+      id: 1,
+      name: 'Anglais',
+      description: 'Thème anglais',
+      cards: [
+        { id: 1, question: 'How do you say "chat" in English?', answer: 'cat' },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Français',
+      description: 'Thème français',
+      cards: [
+        { id: 2, question: 'Quel est le synonyme de "rapide"?', answer: 'vite' },
+      ],
+    },
+  ],
+},
+{
+  id: 2,
+  name: 'Mathématiques',
+  description: 'Catégorie pour les mathématiques.',
+  themes: [
+    {
+      id: 3,
+      name: 'Arithmétique',
+      description: 'Thème arithmétique',
+      cards: [
+        { id: 3, question: 'Combien font 2 + 2 ?', answer: '4' },
+      ],
+    },
+  ],
+},
 ];
 
 const Categories = () => {
-  const [categories, setCategories] = useState<Category[]>(() => {
-    const savedData = localStorage.getItem('categories');
-    if (savedData) {
-      try {
-        const parsedData: any[] = JSON.parse(savedData);
-        // Vérifie que chaque catégorie possède bien la propriété 'answer'
-        if (parsedData.every(category => typeof category.answer === 'string')) {
-          return parsedData.map(category => ({
-            ...category,
-            lastReviewed: category.lastReviewed ? new Date(category.lastReviewed).toISOString() : null
-          }));
-        }
-      } catch (error) {
-        console.error('Erreur lors du parsing des données de localStorage :', error);
-      }
-    }
-    return initialCategories;
-  });
+const [categories, setCategories] = useState<CategoryData[]>(() => {
+  const saved = localStorage.getItem('categoriesData');
+  if (saved) {
+    return JSON.parse(saved);
+  }
+  return initialCategories;
+});
 
-  const [flipped, setFlipped] = useState<number | null>(null);
-  const [answers, setAnswers] = useState<{ [key: number]: string }>({});
+useEffect(() => {
+  localStorage.setItem('categoriesData', JSON.stringify(categories));
+}, [categories]);
 
-  useEffect(() => {
-    console.log('🔹 Sauvegarde des catégories :', categories);
-    localStorage.setItem('categories', JSON.stringify(categories));
-  }, [categories]);
-
-  const handleReview = (id: number) => {
-    const userAnswer = answers[id] ? answers[id].trim().toLowerCase() : '';
-    const category = categories.find(c => c.id === id);
-    if (!category) {
-      console.error(`Aucune catégorie trouvée pour l'ID ${id}`);
-      return;
-    }
-    // Si category.answer n'existe pas, on prend une chaîne vide
-    const correctAnswer = category.answer ? category.answer.toLowerCase() : '';
-    
-    console.log(`Réponse utilisateur: "${userAnswer}", Réponse correcte: "${correctAnswer}"`);
-
-    if (userAnswer && userAnswer === correctAnswer) {
-      setCategories(prevCategories =>
-        prevCategories.map(cat => {
-          if (cat.id === id) {
-            const now = new Date().toISOString();
-            return { ...cat, lastReviewed: now, interval: cat.interval * 2 };
-          }
-          return cat;
-        })
-      );
-      setFlipped(null);
-      setAnswers(prev => ({ ...prev, [id]: '' }));
-    } else {
-      alert('❌ Mauvaise réponse ! Essayez encore.');
-    }
+const handleAddCategory = () => {
+  const name = prompt('Nom de la nouvelle catégorie:');
+  if (!name) return;
+  const description = prompt('Description de la catégorie:') || '';
+  const newCategory: CategoryData = {
+    id: Date.now(),
+    name,
+    description,
+    themes: [],
   };
+  setCategories(prev => [...prev, newCategory]);
+};
 
-  const now = new Date();
-  const categoriesToReview = categories.filter(category => {
-    if (!category.lastReviewed) return true;
-    
-    const lastReviewedDate = new Date(category.lastReviewed);
-    const nextReviewDate = new Date(lastReviewedDate);
-    nextReviewDate.setMinutes(nextReviewDate.getMinutes() + category.interval);
+const handleDeleteCategory = (id: number) => {
+  setCategories(prev => prev.filter(cat => cat.id !== id));
+};
 
-    return nextReviewDate <= now;
-  });
-
-  return (
-    <div className="page-categories">
-      <h1>Catégories de révision</h1>
-      <div className="categories-container">
-        {categoriesToReview.length > 0 ? (
-          categoriesToReview.map(category => (
-            <div 
-              className={`category-card ${flipped === category.id ? 'flipped' : ''}`} 
-              key={category.id}
-              onClick={(e) => {
-                if (!(e.target as HTMLElement).closest('input, button')) {
-                  setFlipped(flipped === category.id ? null : category.id);
-                }
-              }}
-            >
-              {flipped === category.id ? (
-                <div className="card-back">
-                  <p><strong>Question :</strong> {category.question}</p>
-                  <input
-                    type="text"
-                    value={answers[category.id] || ''}
-                    onChange={(e) => setAnswers({ ...answers, [category.id]: e.target.value })} 
-                    placeholder="Votre réponse"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  <button onClick={(e) => { e.stopPropagation(); handleReview(category.id); }}>Valider</button>
-                </div>
-              ) : (
-                <div className="card-front">
-                  <h2>{category.name}</h2>
-                  <p>{category.description}</p>
-                </div>
-              )}
-            </div>
-          ))
-        ) : (
-          <p>✅ Toutes les révisions sont à jour.</p>
-        )}
-      </div>
-    </div>
+const handleEditCategory = (id: number) => {
+  const name = prompt('Nouveau nom:');
+  const description = prompt('Nouvelle description:');
+  setCategories(prev =>
+    prev.map(cat =>
+      cat.id === id ? { ...cat, name: name || cat.name, description: description || cat.description } : cat
+    )
   );
-}
+};
+
+const updateThemes = (categoryId: number, newThemes: Theme[]) => {
+  setCategories(prev =>
+    prev.map(cat => (cat.id === categoryId ? { ...cat, themes: newThemes } : cat))
+  );
+};
+
+return (
+  <div className="page-categories">
+    <h1>Catégories</h1>
+    <button onClick={handleAddCategory}>Ajouter une catégorie</button>
+    <div className="categories-list">
+      {categories.map(cat => (
+        <div key={cat.id} className="category-item">
+          <h2>{cat.name}</h2>
+          <p>{cat.description}</p>
+          <button onClick={() => handleEditCategory(cat.id)}>Éditer</button>
+          <button onClick={() => handleDeleteCategory(cat.id)}>Supprimer</button>
+          <Themes themes={cat.themes} onUpdateThemes={(newThemes) => updateThemes(cat.id, newThemes)} />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+};
 
 export default Categories;
