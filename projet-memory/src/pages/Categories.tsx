@@ -1,13 +1,25 @@
-// /src/pages/Categories.tsx
 import { useState, useEffect } from 'react';
-import Themes, { Theme } from '../components/Themes';
+import Themes from '../components/Themes';
 import './categories.css';
+
+export interface Flashcard {
+  id: number;
+  question: string;
+  answer: string;
+}
+
+export interface ThemeData {
+  id: number;
+  name: string;
+  description: string;
+  cards: Flashcard[];
+}
 
 export interface CategoryData {
   id: number;
   name: string;
   description: string;
-  themes: Theme[];
+  themes: ThemeData[];
 }
 
 const initialCategories: CategoryData[] = [
@@ -24,29 +36,6 @@ const initialCategories: CategoryData[] = [
           { id: 1, question: 'How do you say "chat" in English?', answer: 'cat' },
         ],
       },
-      {
-        id: 2,
-        name: 'Français',
-        description: 'Thème français',
-        cards: [
-          { id: 2, question: 'Quel est le synonyme de "rapide"?', answer: 'vite' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Mathématiques',
-    description: 'Catégorie pour les mathématiques.',
-    themes: [
-      {
-        id: 3,
-        name: 'Arithmétique',
-        description: 'Thème arithmétique',
-        cards: [
-          { id: 3, question: 'Combien font 2 + 2 ?', answer: '4' },
-        ],
-      },
     ],
   },
 ];
@@ -54,10 +43,7 @@ const initialCategories: CategoryData[] = [
 const Categories = () => {
   const [categories, setCategories] = useState<CategoryData[]>(() => {
     const saved = localStorage.getItem('categoriesData');
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    return initialCategories;
+    return saved ? JSON.parse(saved) : initialCategories;
   });
 
   useEffect(() => {
@@ -77,10 +63,6 @@ const Categories = () => {
     setCategories(prev => [...prev, newCategory]);
   };
 
-  const handleDeleteCategory = (id: number) => {
-    setCategories(prev => prev.filter(cat => cat.id !== id));
-  };
-
   const handleEditCategory = (id: number) => {
     const name = prompt('Nouveau nom:');
     const description = prompt('Nouvelle description:');
@@ -91,9 +73,48 @@ const Categories = () => {
     );
   };
 
-  const updateThemes = (categoryId: number, newThemes: Theme[]) => {
+  const handleDeleteCategory = (id: number) => {
+    setCategories(prev => prev.filter(cat => cat.id !== id));
+  };
+
+  const handleAddTheme = (categoryId: number) => {
+    const name = prompt('Nom du nouveau thème:');
+    if (!name) return;
+    const description = prompt('Description du thème:') || '';
+    const newTheme: ThemeData = {
+      id: Date.now(),
+      name,
+      description,
+      cards: [],
+    };
     setCategories(prev =>
-      prev.map(cat => (cat.id === categoryId ? { ...cat, themes: newThemes } : cat))
+      prev.map(cat =>
+        cat.id === categoryId ? { ...cat, themes: [...cat.themes, newTheme] } : cat
+      )
+    );
+  };
+
+  const handleAddFlashcard = (categoryId: number, themeId: number) => {
+    const question = prompt('Question de la carte:');
+    if (!question) return;
+    const answer = prompt('Réponse de la carte:');
+    if (!answer) return;
+    const newCard: Flashcard = {
+      id: Date.now(),
+      question,
+      answer,
+    };
+    setCategories(prev =>
+      prev.map(cat =>
+        cat.id === categoryId
+          ? {
+              ...cat,
+              themes: cat.themes.map(theme =>
+                theme.id === themeId ? { ...theme, cards: [...theme.cards, newCard] } : theme
+              ),
+            }
+          : cat
+      )
     );
   };
 
@@ -114,7 +135,18 @@ const Categories = () => {
               </div>
             </div>
             <p>{cat.description}</p>
-            <Themes themes={cat.themes} onUpdateThemes={(newThemes) => updateThemes(cat.id, newThemes)} />
+            <button className="btn-add-theme" onClick={() => handleAddTheme(cat.id)}>
+              Ajouter un thème
+            </button>
+            <Themes
+              themes={cat.themes}
+              onUpdateThemes={(newThemes) =>
+                setCategories(prev =>
+                  prev.map(c => (c.id === cat.id ? { ...c, themes: newThemes } : c))
+                )
+              }
+              onAddFlashcard={(themeId) => handleAddFlashcard(cat.id, themeId)}
+            />
           </div>
         ))}
       </div>

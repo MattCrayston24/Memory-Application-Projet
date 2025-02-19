@@ -1,134 +1,168 @@
 /* /src/components/Header.css */
 
-/* Styles globaux pour le header */
+/* Importation de la police (optionnel) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #3272b6; /* Couleur personnalisée du header */
-    color: white;
-    z-index: 1000;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Légère ombre pour donner du relief */
-  }
-  
-  .container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  /* Logo */
-  .logo img {
-    height: 40px; /* Taille du logo */
-  }
-  
-  /* Titre */
-  .title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    text-align: center;
-    flex-grow: 1;
-    margin: 0;
-  }
-  
-  /* Menu burger */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px; /* Hauteur fixe */
+  background-color: #1a1a2e; /* Fond sombre */
+  color: #fff;
+  z-index: 1000;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centre le contenu globalement */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease-in-out;
+  position: relative;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centre le contenu */
+}
+
+/* Logo positionné à gauche */
+.logo {
+  position: absolute;
+  left: 20px;
+}
+
+.logo img {
+  height: 50px;
+}
+
+/* Titre centré indépendamment */
+.title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.8rem; /* Taille réduite pour un effet plus discret */
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #e0e0e0;
+  white-space: nowrap;
+}
+
+/* Menu de navigation positionné à droite sur grand écran */
+.nav-menu {
+  position: absolute;
+  right: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-menu ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-menu li {
+  margin: 0;
+}
+
+/* Liens de navigation avec effet de soulignement animé et texte plus petit */
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: #b0b0b0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background-color: #fff;
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #fff;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Bouton burger caché sur grand écran */
+.burger-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.burger-btn img {
+  width: 35px;
+  height: 35px;
+}
+
+/* Mobile : affichage du bouton burger et du menu en ligne sous le header pour écran <= 992px */
+@media (max-width: 992px) {
   .burger-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: none; /* Cacher le bouton burger sur les grands écrans */
+    display: block;
+    position: absolute;
+    right: 20px;
   }
   
-  .burger-btn img {
-    width: 30px;
-    height: 30px;
+  .nav-menu {
+    position: absolute;
+    top: 80px; /* Juste sous le header de 80px de hauteur */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    background-color: #1a1a2e;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px 0;
+    border-top: 1px solid #444;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    visibility: hidden;
+    opacity: 0;
   }
   
-  /* Menu de navigation */
+  .nav-menu.open {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  .nav-menu ul {
+    flex-direction: row;
+    gap: 15px;
+  }
+  
+  .title {
+    font-size: 1.4rem;
+  }
+}
+
+/* Sur écran large (>= 993px), le menu reste en ligne */
+@media (min-width: 993px) {
   .nav-menu {
     display: flex;
     gap: 20px;
   }
-  
-  .nav-link {
-    text-decoration: none;
-    color: white;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: color 0.3s ease;
-  }
-  
-  .nav-link:hover {
-    color: #f1f1f1; /* Couleur au survol */
-  }
-  
-  /* Styles du menu burger lorsqu'il est ouvert */
   .nav-menu.open {
     display: flex;
   }
-  
-  @media (max-width: 768px) {
-    /* Le menu burger devient visible sur les petits écrans */
-    .burger-btn {
-      display: block;
-    }
-  
-    /* Menu en colonne sur les petits écrans */
-    .nav-menu {
-      position: fixed;
-      top: 0;
-      right: -100%;
-      width: 30%;
-      background-color: #3272b6;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 20px;
-      border-radius: 5%;
-      transition: right 0.3s ease;
-    }
-  
-    /* Animation pour faire glisser le menu */
-    .nav-menu.open {
-      right: 0;
-    }
-  
-    /* Liens dans le menu burger */
-    .nav-menu ul {
-      list-style: none;
-      padding: 0;
-      width: 100%;
-    }
-  
-    .nav-menu li {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    .title{
-        font-size: 1.2rem;
-    }
-  }
-  
-  @media (min-width: 769px) {
-    /* Menu horizontal sur les grands écrans */
-    .nav-menu {
-      display: flex;
-      gap: 20px;
-    }
-  
-    .nav-menu.open {
-      display: flex;
-    }
-  }
-  
+}

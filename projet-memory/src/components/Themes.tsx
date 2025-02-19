@@ -1,4 +1,3 @@
-// /src/components/Themes.tsx
 import { useState } from 'react';
 import Cards, { Card } from './Cards';
 import './themes.css';
@@ -13,9 +12,10 @@ export interface Theme {
 interface ThemesProps {
   themes: Theme[];
   onUpdateThemes: (themes: Theme[]) => void;
+  onAddFlashcard: (themeId: number) => void; // Ajout de la fonction d'ajout de carte
 }
 
-const Themes = ({ themes, onUpdateThemes }: ThemesProps) => {
+const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
   const [editingThemeId, setEditingThemeId] = useState<number | null>(null);
   const [editedThemeName, setEditedThemeName] = useState('');
   const [editedThemeDescription, setEditedThemeDescription] = useState('');
@@ -54,21 +54,6 @@ const Themes = ({ themes, onUpdateThemes }: ThemesProps) => {
     onUpdateThemes(newThemes);
   };
 
-  const handleAddCard = (themeId: number) => {
-    const question = prompt('Nouvelle question:');
-    if (!question) return;
-    const answer = prompt('Réponse:') || '';
-    const newCard: Card = {
-      id: Date.now(),
-      question,
-      answer,
-    };
-    const theme = themes.find(t => t.id === themeId);
-    if (!theme) return;
-    const newCards = [...theme.cards, newCard];
-    handleUpdateCards(themeId, newCards);
-  };
-
   return (
     <div className="themes-container">
       {themes.map(theme => (
@@ -95,7 +80,8 @@ const Themes = ({ themes, onUpdateThemes }: ThemesProps) => {
               <p>{theme.description}</p>
               <button onClick={() => handleThemeEdit(theme.id)}>Éditer</button>
               <button onClick={() => handleThemeDelete(theme.id)}>Supprimer</button>
-              <button onClick={() => handleAddCard(theme.id)}>Ajouter une carte</button>
+              <button onClick={() => onAddFlashcard(theme.id)}>Ajouter une carte</button> 
+              {/* Utilisation de onAddFlashcard pour l'ajout des cartes */}
             </div>
           )}
           <Cards cards={theme.cards} onUpdateCards={(newCards) => handleUpdateCards(theme.id, newCards)} />
