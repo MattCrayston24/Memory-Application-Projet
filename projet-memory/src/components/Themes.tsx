@@ -1,6 +1,14 @@
 import { useState } from 'react';
-import Cards, { Card } from './Cards';
+import Cards from './Cards';  // Vérifiez que Cards est correctement importé
 import './themes.css';
+
+export interface Card {
+  id: number;
+  question: string;
+  answer: string;
+  interval: number;
+  nextReviewTime: number;
+}
 
 export interface Theme {
   id: number;
@@ -12,7 +20,7 @@ export interface Theme {
 interface ThemesProps {
   themes: Theme[];
   onUpdateThemes: (themes: Theme[]) => void;
-  onAddFlashcard: (themeId: number) => void; // Ajout de la fonction d'ajout de carte
+  onAddFlashcard: (themeId: number) => void;
 }
 
 const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
@@ -27,10 +35,11 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
 
   const handleThemeEdit = (themeId: number) => {
     const theme = themes.find(t => t.id === themeId);
-    if (!theme) return;
-    setEditingThemeId(themeId);
-    setEditedThemeName(theme.name);
-    setEditedThemeDescription(theme.description);
+    if (theme) {
+      setEditingThemeId(themeId);
+      setEditedThemeName(theme.name);
+      setEditedThemeDescription(theme.description);
+    }
   };
 
   const handleThemeSave = (id: number) => {
@@ -80,11 +89,13 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
               <p>{theme.description}</p>
               <button onClick={() => handleThemeEdit(theme.id)}>Éditer</button>
               <button onClick={() => handleThemeDelete(theme.id)}>Supprimer</button>
-              <button onClick={() => onAddFlashcard(theme.id)}>Ajouter une carte</button> 
-              {/* Utilisation de onAddFlashcard pour l'ajout des cartes */}
+              <button onClick={() => onAddFlashcard(theme.id)}>Ajouter une carte</button>
             </div>
           )}
-          <Cards cards={theme.cards} onUpdateCards={(newCards) => handleUpdateCards(theme.id, newCards)} />
+          <Cards
+            cards={theme.cards}  // On passe les cartes ici pour les afficher
+            onUpdateCards={(newCards) => handleUpdateCards(theme.id, newCards)}
+          />
         </div>
       ))}
     </div>

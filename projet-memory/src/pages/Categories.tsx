@@ -2,24 +2,26 @@ import { useState, useEffect } from 'react';
 import Themes from '../components/Themes';
 import './categories.css';
 
-export interface Flashcard {
+export interface Card {  // Changement ici, on redéfinit 'Card' pour être utilisé de manière cohérente dans toute l'app
   id: number;
   question: string;
   answer: string;
+  interval: number;  // Intervalle de répétition
+  nextReviewTime: number;  // Horodatage pour le moment suivant où la carte doit être révisée
 }
 
 export interface ThemeData {
   id: number;
   name: string;
   description: string;
-  cards: Flashcard[];
+  cards: Card[];  // Utilisation de Card ici, pour correspondre avec le type attendu dans Themes
 }
 
 export interface CategoryData {
   id: number;
   name: string;
   description: string;
-  themes: ThemeData[];
+  themes: ThemeData[];  // Ajout de ThemeData pour la cohérence avec l'utilisation dans Categories
 }
 
 const initialCategories: CategoryData[] = [
@@ -33,7 +35,7 @@ const initialCategories: CategoryData[] = [
         name: 'Anglais',
         description: 'Thème anglais',
         cards: [
-          { id: 1, question: 'How do you say "chat" in English?', answer: 'cat' },
+          { id: 1, question: 'How do you say "chat" in English?', answer: 'cat', interval: 1, nextReviewTime: Date.now() + 60000 },
         ],
       },
     ],
@@ -99,10 +101,12 @@ const Categories = () => {
     if (!question) return;
     const answer = prompt('Réponse de la carte:');
     if (!answer) return;
-    const newCard: Flashcard = {
+    const newCard: Card = {
       id: Date.now(),
       question,
       answer,
+      interval: 1,
+      nextReviewTime: Date.now() + 60000,  // Définir un délai initial de révision
     };
     setCategories(prev =>
       prev.map(cat =>
