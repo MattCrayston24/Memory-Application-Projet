@@ -106,7 +106,7 @@ const Categories = () => {
       question,
       answer,
       interval: 1,
-      nextReviewTime: Date.now() + 60000,  // Définir un délai initial de révision
+      nextReviewTime: Date.now(),  // Définir un délai initial de révision
     };
     setCategories(prev =>
       prev.map(cat =>
