@@ -1,0 +1,121 @@
+openapi: 3.0.0
+info:
+  title: Memory App API
+  description: API pour publier, importer et gérer des thèmes de révision
+  version: 1.0.0
+
+servers:
+  - url: https://memory-app.com/api
+    description: Serveur de production
+  - url: http://localhost:3000/api
+    description: Serveur de développement
+
+paths:
+  /themes:
+    get:
+      summary: Récupère la liste des thèmes publiés
+      description: Renvoie tous les thèmes disponibles publiés par les utilisateurs.
+      responses:
+        '200':
+          description: Liste des thèmes récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Theme'
+
+    post:
+      summary: Publie un nouveau thème
+      description: Crée un nouveau thème de révision et le rend public.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Theme'
+      responses:
+        '201':
+          description: Thème créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        '400':
+          description: Données invalides
+
+  /themes/{id}:
+    get:
+      summary: Récupère un thème spécifique
+      description: Renvoie le thème de révision correspondant à l'ID fourni.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID du thème à récupérer
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Thème récupéré avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        '404':
+          description: Thème non trouvé
+
+    delete:
+      summary: Supprime un thème spécifique
+      description: Supprime le thème correspondant à l'ID fourni.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID du thème à supprimer
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Thème supprimé avec succès
+        '404':
+          description: Thème non trouvé
+
+components:
+  schemas:
+    Theme:
+      type: object
+      required:
+        - title
+        - description
+        - cards
+      properties:
+        id:
+          type: string
+          example: "theme-12345"
+        title:
+          type: string
+          example: "Mathématiques"
+        description:
+          type: string
+          example: "Thème de révision sur les bases de mathématiques"
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+
+    Card:
+      type: object
+      required:
+        - question
+        - answer
+      properties:
+        id:
+          type: string
+          example: "card-67890"
+        question:
+          type: string
+          example: "Quelle est la dérivée de x^2 ?"
+        answer:
+          type: string
+          example: "2x"

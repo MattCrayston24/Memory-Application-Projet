@@ -82,6 +82,11 @@ const Header = () => {
                 Paramètres
               </Link>
             </li>
+            <li>
+              <Link to="/ThemesPage" className="nav-link" onClick={closeNav}>
+                Themes
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

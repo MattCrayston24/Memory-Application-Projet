@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home';
 import Categories from './pages/Categories';
 import Settings from './pages/Settings';
+import ThemesPage from './pages/ThemesPage';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/themespage" element={<ThemesPage/>} /> 
       </Routes>
     </Router>
   );
