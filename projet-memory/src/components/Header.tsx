@@ -2,88 +2,98 @@ import './Header.css';
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
-// Importer les images pour le logo et le bouton du menu burger
-import logoImage from '/assets/logo.png';
-import burgerIconImage from '/assets/burger-icon.png';
-
 const Header = () => {
-  const [isNavOpen, setIsNavOpen] = useState(false); // Etat pour gérer l'ouverture/fermeture du menu burger
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [cardsToReview, setCardsToReview] = useState<{ category: string; count: number }[]>([]);
 
-  // Fermeture du menu burger lorsque l'on clique sur un lien
-  const closeNav = () => setIsNavOpen(false);
+  // Simuler la récupération des cartes à réviser
+  useEffect(() => {
+    // Exemple de données simulées :
+    const mockData = [
+      { category: 'Math', count: 5 },
+      { category: 'Histoire', count: 3 },
+      { category: 'Science', count: 7 },
+    ];
 
-  // Ouvrir/fermer le menu burger
-  const toggleNav = () => setIsNavOpen((prev) => !prev);
-
-  // Gérer le changement d'état d'écran
-  const checkScreenSize = useCallback(() => {
-    // Vérifier si l'écran est mobile (<= 768px)
-    if (window.innerWidth <= 768) {
-      setIsNavOpen(false); // Fermer le menu si mobile
-    }
+    setCardsToReview(mockData);
   }, []);
 
-  // Ajouter un écouteur d'événements pour vérifier la taille de l'écran
-  useEffect(() => {
-    checkScreenSize(); // Vérifier la taille de l'écran au montage
-    window.addEventListener('resize', checkScreenSize); // Mettre à jour à chaque redimensionnement
+  // Toggle du menu burger
+  const toggleNav = () => setIsNavOpen((prev) => !prev);
 
-    return () => {
-      window.removeEventListener('resize', checkScreenSize); // Nettoyer l'écouteur d'événements
-    };
-  }, [checkScreenSize]);
+  // Toggle du menu des notifications
+  const toggleNotification = () => setIsNotificationOpen((prev) => !prev);
 
-  // Gérer la fermeture du menu quand on clique à l'extérieur
+  // Fermer le menu au clic à l'extérieur
   useEffect(() => {
-    const closeMenuOnClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement; // Cast pour dire à TypeScript que c'est un élément DOM
-      if (isNavOpen && target && !target.closest('.header')) { // Vérifier que le clic est à l'extérieur du header
-        setIsNavOpen(false);
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.notification-container') && !target.closest('.notification-btn')) {
+        setIsNotificationOpen(false);
       }
     };
-    document.addEventListener('click', closeMenuOnClickOutside);
+
+    document.addEventListener('click', handleClickOutside);
 
     return () => {
-      document.removeEventListener('click', closeMenuOnClickOutside); // Nettoyer l'événement
+      document.removeEventListener('click', handleClickOutside);
     };
-  }, [isNavOpen]);
+  }, []);
 
   return (
     <header className={`header ${isNavOpen ? 'open' : ''}`}>
-      <div className="container">
-        {/* Logo */}
-        <div className="logo">
-          <img src={logoImage} alt="Logo Projet Memory" />
-        </div>
+      {/* Bouton Notification */}
+      <div className="notification-container">
+        <button className="notification-btn" onClick={toggleNotification}>
+          Notifs
+        </button>
 
-        {/* Titre */}
+        {/* Menu déroulant des notifications */}
+        {isNotificationOpen && (
+          <div className="notification-dropdown">
+            <p>
+              {cardsToReview.reduce((total, item) => total + item.count, 0)} cartes à réviser :
+            </p>
+            <ul>
+              {cardsToReview.map((item) => (
+                <li key={item.category}>
+                  {item.category} : {item.count} cartes
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {/* Titre */}
+      <div className="container">
         <h1 className="title">Projet Memory</h1>
 
         {/* Menu burger */}
         <button className={`burger-btn ${isNavOpen ? 'open' : ''}`} onClick={toggleNav}>
-          <img src={burgerIconImage} alt="Menu burger" />
+          ☰
         </button>
 
-        {/* Menu de navigation */}
         <nav className={`nav-menu ${isNavOpen ? 'open' : ''}`}>
           <ul>
             <li>
-              <Link to="/" className="nav-link" onClick={closeNav}>
+              <Link to="/" className="nav-link">
                 Accueil
               </Link>
             </li>
             <li>
-              <Link to="/categories" className="nav-link" onClick={closeNav}>
+              <Link to="/categories" className="nav-link">
                 Catégories
               </Link>
             </li>
             <li>
-              <Link to="/settings" className="nav-link" onClick={closeNav}>
+              <Link to="/settings" className="nav-link">
                 Paramètres
               </Link>
             </li>
             <li>
-              <Link to="/ThemesPage" className="nav-link" onClick={closeNav}>
+              <Link to="/ThemesPage" className="nav-link">
                 Themes
               </Link>
             </li>

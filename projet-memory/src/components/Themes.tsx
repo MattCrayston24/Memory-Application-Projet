@@ -15,7 +15,7 @@ export interface Theme {
   name: string;
   description: string;
   cards: Card[];
-  backgroundImage?: string;
+  backgroundImage?: string;  // Le fond qui peut être personnalisé
 }
 
 interface ThemesProps {
@@ -31,6 +31,7 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
   const [editedThemeName, setEditedThemeName] = useState('');
   const [editedThemeDescription, setEditedThemeDescription] = useState('');
   const [backgroundSelectionInProgress, setBackgroundSelectionInProgress] = useState<{ [key: number]: boolean }>({});
+  const [tempBackgroundImage, setTempBackgroundImage] = useState<{ [key: number]: string | null }>({});
 
   // ✅ Suppression d'un thème
   const handleThemeDelete = (id: number) => {
@@ -77,10 +78,10 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
 
     reader.onload = () => {
       const result = reader.result as string;
-      const newThemes = themes.map(theme =>
-        theme.id === themeId ? { ...theme, backgroundImage: result } : theme
-      );
-      onUpdateThemes(newThemes);
+      setTempBackgroundImage(prev => ({
+        ...prev,
+        [themeId]: result // Stocke l'image temporaire
+      }));
 
       // ✅ Masquer le sélecteur après sélection d'un fichier
       setBackgroundSelectionInProgress(prev => ({ ...prev, [themeId]: false }));
@@ -91,12 +92,12 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
 
   // ✅ Réinitialiser le fond du thème
   const resetBackground = (themeId: number) => {
-    const newThemes = themes.map(theme =>
-      theme.id === themeId ? { ...theme, backgroundImage: undefined } : theme
-    );
-    onUpdateThemes(newThemes);
+    setTempBackgroundImage(prev => {
+      const updated = { ...prev };
+      delete updated[themeId]; // Supprimer l'image temporaire
+      return updated;
+    });
 
-    // ✅ Réafficher le sélecteur de fichier
     setBackgroundSelectionInProgress(prev => ({ ...prev, [themeId]: false }));
   };
 
@@ -112,78 +113,91 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
   };
 
   return (
-<div className="themes-container">
-  {themes.map(theme => (
-    <div
-      key={theme.id}
-      className="theme"
-      style={{
-        backgroundImage: `url(${theme.backgroundImage || DEFAULT_BACKGROUND})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      {editingThemeId === theme.id ? (
-        <div className="theme-edit">
-          <input className='typetxt'
-            type="text"
-            value={editedThemeName}
-            onChange={(e) => setEditedThemeName(e.target.value)}
-            placeholder="Nom du thème"
-          />
-          <input className='typetxt'
-            type="text"
-            value={editedThemeDescription}
-            onChange={(e) => setEditedThemeDescription(e.target.value)}
-            placeholder="Description du thème"
-          />
-          <button className="buttonvv" onClick={() => handleThemeSave(theme.id)}>Enregistrer</button>
-        </div>
-      ) : (
-        <div className="theme-header">
-          {/* Section Titre / Description */}
-          <div className="theme-title-description">
-            <h2>{theme.name}</h2>
-            <p className="pp">{theme.description}</p>
-          </div>
-
-          {/* Section Boutons (Éditer / Supprimer / Personnaliser) */}
-          <div className="theme-buttons">
-            <button className="buttonv" onClick={() => handleThemeEdit(theme.id)}>Éditer</button>
-            <button className="buttonv" onClick={() => handleThemeDelete(theme.id)}>Supprimer</button>
-            {backgroundSelectionInProgress[theme.id] ? (
+    <div className="themes-container">
+      {themes.map(theme => (
+        <div
+          key={theme.id}
+          className="theme"
+          style={{
+            backgroundImage: `url(${tempBackgroundImage[theme.id] || theme.backgroundImage || DEFAULT_BACKGROUND})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          {editingThemeId === theme.id ? (
+            <div className="theme-edit">
               <input
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  e.target.files && handleBackgroundChange(theme.id, e.target.files[0])
-                }
+                className='typetxt'
+                type="text"
+                value={editedThemeName}
+                onChange={(e) => setEditedThemeName(e.target.value)}
+                placeholder="Nom du thème"
               />
-            ) : (
-              <button
-                className="buttonv"
-                onClick={() => handlePersonalizeClick(theme.id)}
-              >
-                Personnaliser
-              </button>
-            )}
-          </div>
+              <input
+                className='typetxt'
+                type="text"
+                value={editedThemeDescription}
+                onChange={(e) => setEditedThemeDescription(e.target.value)}
+                placeholder="Description du thème"
+              />
+              <button className="buttonvv" onClick={() => handleThemeSave(theme.id)}>Enregistrer</button>
+            </div>
+          ) : (
+            <div className="theme-header">
+              {/* Section Titre / Description */}
+              <div className="theme-title-description">
+                <h2>{theme.name}</h2>
+                <p className="pp">{theme.description}</p>
+              </div>
 
-          {/* Section Ajouter une carte */}
-          <div className="theme-add-card">
-            <button className="btn-add-theme" onClick={() => onAddFlashcard(theme.id)}>Ajouter une carte</button>
-          </div>
+              {/* Section Boutons (Éditer / Supprimer / Personnaliser) */}
+              <div className={`theme-buttons ${backgroundSelectionInProgress[theme.id] ? 'column' : ''}`}>
+                {!backgroundSelectionInProgress[theme.id] && (
+                  <>
+                    <button className="buttonv" onClick={() => handleThemeEdit(theme.id)}>Éditer</button>
+                    <button className="buttonv" onClick={() => handleThemeDelete(theme.id)}>Supprimer</button>
+                  </>
+                )}
+                {backgroundSelectionInProgress[theme.id] ? (
+                  <div className='themev2'>
+                    <input
+                      className="buttonchoose"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        e.target.files && handleBackgroundChange(theme.id, e.target.files[0])
+                      }
+                    />
+                    <button
+                      className="buttonv"
+                      onClick={() => handlePersonalizeClick(theme.id)} // Pour revenir
+                    >
+                      Retour
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="buttonv"
+                    onClick={() => handlePersonalizeClick(theme.id)} // Pour activer la personnalisation
+                  >
+                    Personnaliser
+                  </button>
+                )}
+              </div>
+
+              {/* Section Ajouter une carte */}
+              <div className="theme-add-card">
+                <button className="btn-add-theme" onClick={() => onAddFlashcard(theme.id)}>Ajouter une carte</button>
+              </div>
+            </div>
+          )}
+          <Cards
+            cards={theme.cards}
+            onUpdateCards={(newCards) => handleUpdateCards(theme.id, newCards)}
+          />
         </div>
-      )}
-      <Cards
-        cards={theme.cards}
-        onUpdateCards={(newCards) => handleUpdateCards(theme.id, newCards)}
-      />
+      ))}
     </div>
-  ))}
-</div>
-
-
   );
 };
 
