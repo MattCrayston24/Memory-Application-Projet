@@ -121,7 +121,7 @@ const Header = () => {
         {isNotificationOpen && (
           <div className="notification-dropdown">
             <p>
-              {cardsToReview.reduce((total, item) => total + item.count, 0)} cartes à réviser :
+              {cardsToReview.reduce((total, item) => total + item.count, 0)} carte(s) à réviser :
             </p>
             <ul>
               {cardsToReview.map((item) => (
