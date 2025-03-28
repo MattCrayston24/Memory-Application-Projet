@@ -2,26 +2,26 @@ import { useState, useEffect } from 'react';
 import Themes from '../components/Themes';
 import './categories.css';
 
-export interface Card {  // Changement ici, on redéfinit 'Card' pour être utilisé de manière cohérente dans toute l'app
+export interface Card {
   id: number;
   question: string;
   answer: string;
-  interval: number;  // Intervalle de répétition
-  nextReviewTime: number;  // Horodatage pour le moment suivant où la carte doit être révisée
+  interval: number;
+  nextReviewTime: number;
 }
 
 export interface ThemeData {
   id: number;
   name: string;
   description: string;
-  cards: Card[];  // Utilisation de Card ici, pour correspondre avec le type attendu dans Themes
+  cards: Card[];
 }
 
 export interface CategoryData {
   id: number;
   name: string;
   description: string;
-  themes: ThemeData[];  // Ajout de ThemeData pour la cohérence avec l'utilisation dans Categories
+  themes: ThemeData[];
 }
 
 const initialCategories: CategoryData[] = [
@@ -35,7 +35,13 @@ const initialCategories: CategoryData[] = [
         name: 'Anglais',
         description: 'Thème anglais',
         cards: [
-          { id: 1, question: 'How do you say "chat" in English?', answer: 'cat', interval: 1, nextReviewTime: Date.now() + 60000 },
+          {
+            id: 1,
+            question: 'How do you say "chat" in English?',
+            answer: 'cat',
+            interval: 1,
+            nextReviewTime: Date.now() + 60000,
+          },
         ],
       },
     ],
@@ -48,9 +54,24 @@ const Categories = () => {
     return saved ? JSON.parse(saved) : initialCategories;
   });
 
+  // Sauvegarder automatiquement dans le localStorage lors d'un changement
   useEffect(() => {
     localStorage.setItem('categoriesData', JSON.stringify(categories));
+    updateCardsToReview();
   }, [categories]);
+
+  // Mettre à jour le localStorage pour les cartes à réviser
+  const updateCardsToReview = () => {
+    const allCards = categories.flatMap(category =>
+      category.themes.flatMap(theme => theme.cards.map(card => ({
+        id: card.id,
+        category: category.name,
+        nextReviewTime: card.nextReviewTime,
+      })))
+    );
+
+    localStorage.setItem('cards', JSON.stringify(allCards));
+  };
 
   const handleAddCategory = () => {
     const name = prompt('Nom de la nouvelle catégorie:');
@@ -70,7 +91,9 @@ const Categories = () => {
     const description = prompt('Nouvelle description:');
     setCategories(prev =>
       prev.map(cat =>
-        cat.id === id ? { ...cat, name: name || cat.name, description: description || cat.description } : cat
+        cat.id === id
+          ? { ...cat, name: name || cat.name, description: description || cat.description }
+          : cat
       )
     );
   };
@@ -106,7 +129,7 @@ const Categories = () => {
       question,
       answer,
       interval: 1,
-      nextReviewTime: Date.now(),  // Définir un délai initial de révision
+      nextReviewTime: Date.now(),
     };
     setCategories(prev =>
       prev.map(cat =>
