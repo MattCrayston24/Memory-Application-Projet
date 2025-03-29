@@ -137,7 +137,6 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
               )}
             </div>
             <div className="card-back">
-              <p><strong>Réponse :</strong> {card.answer}</p>
               <input
                 type="text"
                 value={userAnswers[card.id] || ''}
