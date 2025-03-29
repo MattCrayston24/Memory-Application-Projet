@@ -12,10 +12,10 @@
 }
 
 .card {
-  width: 320px;     /* Agrandit la carte */
+  width: 320px;    
   max-width: 350px;  
   margin: 0 auto;
-  height: 350px;     /* Agrandit la hauteur de la carte */
+  height: 300px;
   perspective: 1000px;
   cursor: pointer;
   border: none;
@@ -112,7 +112,7 @@
   }
 
   .card-inner {
-    height: 300px;  /* Ajuste la hauteur de la carte pour les écrans plus petits */
+    height: 300px;  /
   }
 
   .card-front,
@@ -142,7 +142,11 @@
   }
 
   .card-inner {
-    height: 280px;  /* Ajuste la hauteur pour les tablettes */
+    height: 280px; 
+  }
+
+  .card{
+    height: 280px;
   }
 
   .card-front,
@@ -172,11 +176,11 @@
   }
 
   .card-inner {
-    height: 220px; /* Réduit la hauteur pour les écrans mobiles */
+    height: 320px;
   }
 
   .card {
-    height: 220px; /* Augmente la hauteur sur mobile */
+    height: 320px; 
   }
 
   .card-front,
@@ -200,21 +204,18 @@
   }
 }
 
-/* Styles pour l'ajout de médias dans la carte */
-
 .media-container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 50%;  /* Taille maximale de l'élément multimédia à la moitié de la carte */
-  margin-top: 10px;
+  height: 65%;
 }
 
 .media {
   max-width: 100%;
-  max-height: 100%; /* S'assure que l'image, la vidéo ou l'audio ne dépassent pas la moitié de la carte */
-  object-fit: contain;  /* Garder l'aspect ratio */
+  max-height: 100%; 
+  object-fit: contain;  
 }
 
 .media-upload {
@@ -240,33 +241,24 @@
   background-color: #f0f0f0;
 }
 
-/* Design responsive */
 @media (max-width: 768px) {
   .media-container {
-    height: 50%; /* Maintient la taille du média à la moitié de la carte, même sur des petits écrans */
+    height: 50%; 
   }
 
   .media {
     max-width: 90%;
-    max-height: 90%; /* Réduit la taille pour les petits écrans */
+    max-height: 90%; 
   }
 }
 
 @media (max-width: 480px) {
   .media-container {
-    height: 60%; /* Taille ajustée pour les petits écrans */
+    height: 60%; 
   }
 
   .media {
     max-width: 100%;
-    max-height: 100%; /* Réduit davantage pour les écrans très petits */
-  }
-
-  .card-inner {
-    height: 180px;
-  }
-
-  .card {
-    height: 180px;
+    max-height: 90%;
   }
 }

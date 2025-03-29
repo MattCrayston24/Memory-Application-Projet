@@ -53,7 +53,7 @@
 
 .theme-header .pp {
   display: flex;
-  width: 200px;
+  width: 550px;
   text-align: center;
   justify-content: center;
   font-size: 1.25em;
@@ -67,14 +67,19 @@
 
 @media (max-width: 767px){
   .theme-header .pp {
-    width: 120px;
-    font-size: 0.85rem;
+    width: 175px;
+    font-size: 1.15rem;
   }
 }
 
 @media (max-width: 500px){
   .theme-header .pp {
-    width: 100px;
+    width: 120px;
+    font-size: 0.9rem;
+  }
+}
+@media (max-width: 400px){
+  .theme-header .pp {
     font-size: 0.65rem;
   }
 }
