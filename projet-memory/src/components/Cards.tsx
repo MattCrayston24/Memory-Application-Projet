@@ -5,7 +5,7 @@ export interface Card {
   id: number;
   question: string;
   answer: string;
-  interval: number;
+  interval: number; // Valeur en jours (ex. 1, 2, 4, etc.)
   nextReviewTime: number;
   mediaUrl?: string;
   mediaType?: 'image' | 'video' | 'audio';
@@ -22,6 +22,7 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
   const [activeCards, setActiveCards] = useState<Card[]>([]);
   const [isAddingMedia, setIsAddingMedia] = useState<number | null>(null);
 
+  // Récupère les cartes à réviser (filtre sur nextReviewTime)
   useEffect(() => {
     const filteredCards = cards.filter(card => card.nextReviewTime <= Date.now());
     setActiveCards(filteredCards);
@@ -35,11 +36,16 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
     const userAnswer = userAnswers[id] ? userAnswers[id].trim().toLowerCase() : '';
     const card = cards.find(c => c.id === id);
     if (!card) return;
+
     const correctAnswer = card.answer.trim().toLowerCase();
+    const baseInterval = Number(localStorage.getItem('baseInterval')) || 1;
+    const maxLevel = Number(localStorage.getItem('maxLevel')) || 3;
+    const maxInterval = baseInterval * Math.pow(2, maxLevel - 1);
 
     if (userAnswer === correctAnswer) {
-      const nextInterval = card.interval === 0 ? 1 : card.interval * 2;
-      const nextReviewTime = Date.now() + nextInterval * 60000;
+      let nextInterval = card.interval === 0 ? baseInterval : card.interval * 2;
+      if (nextInterval > maxInterval) nextInterval = maxInterval;
+      const nextReviewTime = Date.now() + nextInterval * 24 * 60 * 60 * 1000;
       const updatedCard = { ...card, interval: nextInterval, nextReviewTime };
       const updatedCards = cards.map(c => c.id === card.id ? updatedCard : c);
       localStorage.setItem('cards', JSON.stringify(updatedCards));
@@ -60,7 +66,6 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
     onUpdateCards(updatedCards);
   };
 
-  // Lire le fichier en base64 pour persister le média
   const handleAddMedia = (id: number, mediaFile: File, mediaType: 'image' | 'video' | 'audio') => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -101,14 +106,13 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
                     <img src={card.mediaUrl} alt="Média" className="media" />
                   )}
                   {card.mediaType === 'video' && (
-                    <video controls className="media" preload="auto">
+                    <video controls className="media">
                       <source src={card.mediaUrl} type="video/mp4" />
                       Votre navigateur ne supporte pas la vidéo.
                     </video>
                   )}
-
                   {card.mediaType === 'audio' && (
-                    <audio controls className="media" preload="none">
+                    <audio controls className="media">
                       <source src={card.mediaUrl} type="audio/mpeg" />
                       Votre navigateur ne supporte pas l'audio.
                     </audio>
