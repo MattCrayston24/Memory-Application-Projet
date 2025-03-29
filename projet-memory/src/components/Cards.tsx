@@ -7,7 +7,7 @@ export interface Card {
   answer: string;
   interval: number;
   nextReviewTime: number;
-  mediaUrl?: string; // URL du fichier média (photo, vidéo ou audio)
+  mediaUrl?: string; // URL du fichier média (photo, vidéo ou audio) en base64
   mediaType?: 'image' | 'video' | 'audio'; // Type du fichier média
 }
 
@@ -20,7 +20,7 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
   const [flipped, setFlipped] = useState<number | null>(null);
   const [userAnswers, setUserAnswers] = useState<{ [key: number]: string }>({});
   const [activeCards, setActiveCards] = useState<Card[]>([]);
-  const [isAddingMedia, setIsAddingMedia] = useState<number | null>(null); // Gérer l'état d'ajout de média
+  const [isAddingMedia, setIsAddingMedia] = useState<number | null>(null);
 
   useEffect(() => {
     const filteredCards = cards.filter(card => card.nextReviewTime <= Date.now());
@@ -61,14 +61,18 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
     onUpdateCards(updatedCards);
   };
 
+  // Lire le fichier en base64 pour que le média soit persistant
   const handleAddMedia = (id: number, mediaFile: File, mediaType: 'image' | 'video' | 'audio') => {
-    const mediaUrl = URL.createObjectURL(mediaFile);
-    const updatedCard = { ...cards.find(c => c.id === id)!, mediaUrl, mediaType };
-    const updatedCards = cards.map(c => c.id === id ? updatedCard : c);
-
-    localStorage.setItem('cards', JSON.stringify(updatedCards));
-    onUpdateCards(updatedCards);
-    setIsAddingMedia(null);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const updatedCard = { ...cards.find(c => c.id === id)!, mediaUrl: result, mediaType };
+      const updatedCards = cards.map(c => c.id === id ? updatedCard : c);
+      localStorage.setItem('cards', JSON.stringify(updatedCards));
+      onUpdateCards(updatedCards);
+      setIsAddingMedia(null);
+    };
+    reader.readAsDataURL(mediaFile);
   };
 
   return (
@@ -95,20 +99,20 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
                 </button>
               )}
 
-              {/* Affichage du média ajouté (image, vidéo ou audio) */}
+              {/* Affichage du média ajouté */}
               {card.mediaUrl && (
                 <div className="media-container">
                   {card.mediaType === 'image' && (
                     <img src={card.mediaUrl} alt="Média" className="media" />
                   )}
                   {card.mediaType === 'video' && (
-                    <video controls className="media" preload="auto">
+                    <video controls className="media" preload="metadata">
                       <source src={card.mediaUrl} type="video/mp4" />
                       Votre navigateur ne supporte pas la vidéo.
                     </video>
                   )}
                   {card.mediaType === 'audio' && (
-                    <audio controls className="media" preload="auto">
+                    <audio controls className="media" preload="metadata">
                       <source src={card.mediaUrl} type="audio/mpeg" />
                       Votre navigateur ne supporte pas l'audio.
                     </audio>
