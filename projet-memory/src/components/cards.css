@@ -4,7 +4,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center; 
-  gap: 20px;
+  gap: 30px;
   margin: 20px auto;
   max-width: 1200px;
   background-color: #f9f9f9;
@@ -12,10 +12,10 @@
 }
 
 .card {
-  width: 280px;     
-  max-width: 300px;  
+  width: 320px;     /* Agrandit la carte */
+  max-width: 350px;  
   margin: 0 auto;
-  height: 200px;
+  height: 350px;     /* Agrandit la hauteur de la carte */
   perspective: 1000px;
   cursor: pointer;
   border: none;
@@ -25,7 +25,7 @@
 .card-inner {
   position: relative;
   width: 100%;
-  height: 200px;         
+  height: 100%;         
   transform-style: preserve-3d;
   transition: transform 0.6s;
   border: none; 
@@ -106,28 +106,63 @@
   gap: 10px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .cards-container {
-    gap: 15px;
+    gap: 20px;
   }
+
   .card-inner {
-    height: 220px;
+    height: 300px;  /* Ajuste la hauteur de la carte pour les écrans plus petits */
   }
+
   .card-front,
   .card-back {
     padding: 15px;
   }
+
   .card-back p,
   .card-front p {
     font-size: 0.9rem;
   }
+
   .card-back input {
     padding: 8px;
     font-size: 0.9rem;
   }
+
   .card-back button {
     padding: 6px 10px;
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .cards-container {
+    gap: 15px;
+  }
+
+  .card-inner {
+    height: 280px;  /* Ajuste la hauteur pour les tablettes */
+  }
+
+  .card-front,
+  .card-back {
+    padding: 10px;
+  }
+
+  .card-back p,
+  .card-front p {
+    font-size: 0.8rem;
+  }
+
+  .card-back input {
+    padding: 6px;
+    font-size: 0.8rem;
+  }
+
+  .card-back button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
   }
 }
 
@@ -135,32 +170,103 @@
   .cards-container {
     gap: 10px;
   }
+
   .card-inner {
-    height: 200px;
+    height: 220px; /* Réduit la hauteur pour les écrans mobiles */
   }
+
+  .card {
+    height: 220px; /* Augmente la hauteur sur mobile */
+  }
+
   .card-front,
   .card-back {
-    padding: 15px;
+    padding: 10px;
   }
+
   .card-back p,
   .card-front p {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
+
   .card-back input {
-    padding: 6px;
-    font-size: 0.8rem;
+    padding: 5px;
+    font-size: 0.7rem;
   }
+
   .card-back button {
-    padding: 5px 10px;
-    font-size: 0.8rem;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+}
+
+/* Styles pour l'ajout de médias dans la carte */
+
+.media-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50%;  /* Taille maximale de l'élément multimédia à la moitié de la carte */
+  margin-top: 10px;
+}
+
+.media {
+  max-width: 100%;
+  max-height: 100%; /* S'assure que l'image, la vidéo ou l'audio ne dépassent pas la moitié de la carte */
+  object-fit: contain;  /* Garder l'aspect ratio */
+}
+
+.media-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.media-upload input {
+  margin-bottom: 10px;
+}
+
+.add-content-btn {
+  background-color: #ffffff;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.add-content-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/* Design responsive */
+@media (max-width: 768px) {
+  .media-container {
+    height: 50%; /* Maintient la taille du média à la moitié de la carte, même sur des petits écrans */
+  }
+
+  .media {
+    max-width: 90%;
+    max-height: 90%; /* Réduit la taille pour les petits écrans */
+  }
+}
+
+@media (max-width: 480px) {
+  .media-container {
+    height: 60%; /* Taille ajustée pour les petits écrans */
+  }
+
+  .media {
+    max-width: 100%;
+    max-height: 100%; /* Réduit davantage pour les écrans très petits */
   }
 
   .card-inner {
-    height: 150px;       
+    height: 180px;
   }
 
-  .card {   
-    height: 150px;
+  .card {
+    height: 180px;
   }
-  
 }

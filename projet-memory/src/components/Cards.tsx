@@ -5,8 +5,10 @@ export interface Card {
   id: number;
   question: string;
   answer: string;
-  interval: number; 
-  nextReviewTime: number; 
+  interval: number;
+  nextReviewTime: number;
+  mediaUrl?: string; // URL du fichier média (photo, vidéo ou audio)
+  mediaType?: 'image' | 'video' | 'audio'; // Type du fichier média
 }
 
 interface CardsProps {
@@ -18,21 +20,16 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
   const [flipped, setFlipped] = useState<number | null>(null);
   const [userAnswers, setUserAnswers] = useState<{ [key: number]: string }>({});
   const [activeCards, setActiveCards] = useState<Card[]>([]);
-
-  // Mettre à jour les cartes actives au chargement ou changement de cartes
+  const [isAddingMedia, setIsAddingMedia] = useState<number | null>(null); // Gérer l'état d'ajout de média
 
   useEffect(() => {
     const filteredCards = cards.filter(card => card.nextReviewTime <= Date.now());
     setActiveCards(filteredCards);
   }, [cards]);
 
-  // Fonction pour réinitialiser une carte si la réponse est incorrecte
-
   const resetCard = (card: Card) => {
-    return { ...card, interval: 0, nextReviewTime: Date.now() }; 
+    return { ...card, interval: 0, nextReviewTime: Date.now() };
   };
-
-  // Fonction pour gérer l'avancement des cartes
 
   const handleReview = (id: number) => {
     const userAnswer = userAnswers[id] ? userAnswers[id].trim().toLowerCase() : '';
@@ -41,36 +38,37 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
     const correctAnswer = card.answer.trim().toLowerCase();
 
     if (userAnswer === correctAnswer) {
-
-      const nextInterval = card.interval === 0 ? 1 : card.interval * 2; 
-      const nextReviewTime = Date.now() + nextInterval * 60000; 
+      const nextInterval = card.interval === 0 ? 1 : card.interval * 2;
+      const nextReviewTime = Date.now() + nextInterval * 60000;
       const updatedCard = { ...card, interval: nextInterval, nextReviewTime };
       const updatedCards = cards.map(c => c.id === card.id ? updatedCard : c);
 
       localStorage.setItem('cards', JSON.stringify(updatedCards));
       onUpdateCards(updatedCards);
-
-      // Afficher le temps dans la console
-
-      console.log(`Carte mise à jour : ${card.question}, Prochain réexamen dans ${nextInterval} minutes.`);
       alert('✅ Bonne réponse !');
     } else {
-
-      // Réponse incorrecte, réinitialiser la carte
-
       const resetUpdatedCard = resetCard(card);
       const updatedCards = cards.map(c => c.id === card.id ? resetUpdatedCard : c);
-      localStorage.setItem('cards', JSON.stringify(updatedCards)); // Sauvegarder dans le localStorage
+      localStorage.setItem('cards', JSON.stringify(updatedCards));
       onUpdateCards(updatedCards);
-
       alert('❌ Mauvaise réponse ! Essayez encore.');
     }
   };
 
   const handleDelete = (id: number) => {
     const updatedCards = cards.filter(card => card.id !== id);
-    localStorage.setItem('cards', JSON.stringify(updatedCards)); // Sauvegarder dans le localStorage
+    localStorage.setItem('cards', JSON.stringify(updatedCards));
     onUpdateCards(updatedCards);
+  };
+
+  const handleAddMedia = (id: number, mediaFile: File, mediaType: 'image' | 'video' | 'audio') => {
+    const mediaUrl = URL.createObjectURL(mediaFile);
+    const updatedCard = { ...cards.find(c => c.id === id)!, mediaUrl, mediaType };
+    const updatedCards = cards.map(c => c.id === id ? updatedCard : c);
+
+    localStorage.setItem('cards', JSON.stringify(updatedCards));
+    onUpdateCards(updatedCards);
+    setIsAddingMedia(null);
   };
 
   return (
@@ -89,9 +87,56 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
             <div className="card-front">
               <p><strong>Révision Card</strong></p>
               <p>Question : {card.question}</p>
+
+              {/* Bouton "Contenu" pour ajouter un média */}
+              {!card.mediaUrl && !isAddingMedia && (
+                <button className="add-content-btn" onClick={() => setIsAddingMedia(card.id)}>
+                  Ajouter un contenu
+                </button>
+              )}
+
+              {/* Affichage du média ajouté (image, vidéo ou audio) */}
+              {card.mediaUrl && (
+                <div className="media-container">
+                  {card.mediaType === 'image' && (
+                    <img src={card.mediaUrl} alt="Média" className="media" />
+                  )}
+                  {card.mediaType === 'video' && (
+                    <video controls className="media" preload="auto">
+                      <source src={card.mediaUrl} type="video/mp4" />
+                      Votre navigateur ne supporte pas la vidéo.
+                    </video>
+                  )}
+                  {card.mediaType === 'audio' && (
+                    <audio controls className="media" preload="auto">
+                      <source src={card.mediaUrl} type="audio/mpeg" />
+                      Votre navigateur ne supporte pas l'audio.
+                    </audio>
+                  )}
+                </div>
+              )}
+
+              {/* Formulaire pour ajouter un fichier multimédia */}
+              {isAddingMedia === card.id && (
+                <div className="media-upload">
+                  <input
+                    type="file"
+                    accept="image/*, video/*, audio/*"
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        const mediaFile = e.target.files[0];
+                        const mediaType = mediaFile.type.split('/')[0] as 'image' | 'video' | 'audio';
+                        handleAddMedia(card.id, mediaFile, mediaType);
+                      }
+                    }}
+                  />
+                  <button onClick={() => setIsAddingMedia(null)}>Annuler</button>
+                </div>
+              )}
             </div>
+
             <div className="card-back">
-              <p><strong>Question :</strong> {card.question}</p>
+              <p><strong>Réponse :</strong> {card.answer}</p>
               <input
                 type="text"
                 value={userAnswers[card.id] || ''}
