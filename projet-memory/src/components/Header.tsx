@@ -6,6 +6,12 @@ const Header = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [cardsToReview, setCardsToReview] = useState<{ category: string; count: number }[]>([]);
+  const [notificationTime, setNotificationTime] = useState<string>(() => {
+    return localStorage.getItem('notificationTime') || '09:00';
+  });
+  const [notificationFrequency, setNotificationFrequency] = useState<number>(() => {
+    return Number(localStorage.getItem('notificationFrequency')) || 1;
+  });
 
   // Fonction pour récupérer les cartes à réviser depuis le localStorage
   const getCardsToReview = () => {
@@ -44,40 +50,53 @@ const Header = () => {
     setCardsToReview(groupedData);
   };
 
-  useEffect(() => {
-    // Vérification toutes les 24h à 9h du matin
-    const checkNotifications = () => {
-      const now = new Date();
-      const targetTime = new Date();
-      targetTime.setHours(9, 0, 0, 0);
+  // Fonction pour programmer la notification
+  const scheduleNotification = () => {
+    const [hours, minutes] = notificationTime.split(':').map(Number);
+    const now = new Date();
+    const targetTime = new Date();
 
-      // Si l'heure est déjà passée aujourd'hui, planifier pour demain
-      if (now > targetTime) {
-        targetTime.setDate(targetTime.getDate() + 1);
+    targetTime.setHours(hours, minutes, 0, 0);
+
+    if (now > targetTime) {
+      // Si l'heure est déjà passée aujourd'hui, programmer pour le lendemain
+      targetTime.setDate(targetTime.getDate() + 1);
+    }
+
+    const timeUntilNextNotification = targetTime.getTime() - now.getTime();
+
+    setTimeout(() => {
+      getCardsToReview();
+
+      // Vérification des permissions de notification
+      if (Notification.permission === 'granted') {
+        const totalCards = cardsToReview.reduce((total, item) => total + item.count, 0);
+        if (totalCards > 0) {
+          new Notification('Révision de cartes', {
+            body: `Vous avez ${totalCards} carte(s) à réviser.`,
+          });
+        }
       }
 
-      const timeUntilNextCheck = targetTime.getTime() - now.getTime();
+      // Reprogrammer en fonction de la fréquence choisie
+      setTimeout(scheduleNotification, notificationFrequency * 24 * 60 * 60 * 1000); // Fréquence en jours
+    }, timeUntilNextNotification);
+  };
 
-      // Lancer le premier check à l'heure cible
-      const timer = setTimeout(() => {
-        getCardsToReview();
+  useEffect(() => {
+    // Vérifier la permission pour les notifications
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          scheduleNotification(); // Lancer la première vérification
+        }
+      });
+    } else {
+      scheduleNotification(); // Si la permission est déjà accordée
+    }
 
-        // Ensuite, vérifier toutes les 24 heures
-        const interval = setInterval(() => {
-          getCardsToReview();
-        }, 24 * 60 * 60 * 1000); // 24h
-
-        return () => clearInterval(interval);
-      }, timeUntilNextCheck);
-
-      return () => clearTimeout(timer);
-    };
-
-    checkNotifications();
-
-    // Vérification initiale au chargement
     getCardsToReview();
-  }, []);
+  }, [notificationTime, notificationFrequency]);
 
   // Toggle du menu burger
   const toggleNav = () => setIsNavOpen((prev) => !prev);
@@ -103,6 +122,14 @@ const Header = () => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, []);
+
+  // Fonction pour enregistrer l'heure et la fréquence
+  const handleSaveSettings = () => {
+    localStorage.setItem('notificationTime', notificationTime);
+    localStorage.setItem('notificationFrequency', String(notificationFrequency));
+    scheduleNotification(); // Redémarrer la notification après sauvegarde
+    alert('Paramètres enregistrés !');
+  };
 
   return (
     <header className={`header ${isNavOpen ? 'open' : ''}`}>
@@ -130,6 +157,30 @@ const Header = () => {
                 </li>
               ))}
             </ul>
+            {/* Configuration de l'heure et de la fréquence */}
+            <div className="notification-settings notif">
+              <label className='label-head'>Heure de notification :</label>
+              <input
+                className='time-head'
+                type="time"
+                value={notificationTime}
+                onChange={(e) => setNotificationTime(e.target.value)}
+              />
+
+              <label className='label-head'>Fréquence de notification :</label>
+              <select
+                className='time-head'
+                value={notificationFrequency}
+                onChange={(e) => setNotificationFrequency(Number(e.target.value))}
+              >
+                <option value={1}>1 jour</option>
+                <option value={2}>2 jours</option>
+                <option value={4}>4 jours</option>
+                <option value={7}>1 semaine</option>
+              </select>
+
+              <button className="buttonw" onClick={handleSaveSettings}>Enregistrer</button>
+            </div>
           </div>
         )}
       </div>
