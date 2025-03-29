@@ -1,4 +1,3 @@
-// API pour publier un nouveau thème
 export const publishTheme = async (theme: { name: string; description: string; cards: any[] }) => {
     const response = await fetch('http://localhost:3000/api/themes', {
       method: 'POST',
@@ -14,11 +13,12 @@ export const publishTheme = async (theme: { name: string; description: string; c
   };
   
   // API pour récupérer les thèmes partagés
+
   export const fetchThemes = async () => {
     const response = await fetch('http://localhost:3000/api/themes');
     if (!response.ok) {
       throw new Error('Erreur lors de la récupération des thèmes');
     }
-    return await response.json();  // Retourne la liste des thèmes
+    return await response.json();  
   };
   

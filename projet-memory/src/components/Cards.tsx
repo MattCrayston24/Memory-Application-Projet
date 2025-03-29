@@ -5,8 +5,8 @@ export interface Card {
   id: number;
   question: string;
   answer: string;
-  interval: number; // Intervalle de répétition
-  nextReviewTime: number; // Horodatage pour le moment suivant où la carte doit être révisée
+  interval: number; 
+  nextReviewTime: number; 
 }
 
 interface CardsProps {
@@ -20,19 +20,20 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
   const [activeCards, setActiveCards] = useState<Card[]>([]);
 
   // Mettre à jour les cartes actives au chargement ou changement de cartes
+
   useEffect(() => {
-    // Nous filtrons toutes les cartes qui sont prêtes à être révisées
     const filteredCards = cards.filter(card => card.nextReviewTime <= Date.now());
     setActiveCards(filteredCards);
   }, [cards]);
 
   // Fonction pour réinitialiser une carte si la réponse est incorrecte
+
   const resetCard = (card: Card) => {
-    // Réinitialiser l'intervalle à 0 minute pour que la carte soit revue immédiatement
-    return { ...card, interval: 0, nextReviewTime: Date.now() }; // Réinitialiser à 0 minutes
+    return { ...card, interval: 0, nextReviewTime: Date.now() }; 
   };
 
   // Fonction pour gérer l'avancement des cartes
+
   const handleReview = (id: number) => {
     const userAnswer = userAnswers[id] ? userAnswers[id].trim().toLowerCase() : '';
     const card = cards.find(c => c.id === id);
@@ -40,21 +41,23 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
     const correctAnswer = card.answer.trim().toLowerCase();
 
     if (userAnswer === correctAnswer) {
-      // Réponse correcte, avancer dans les intervalles de répétition
-      const nextInterval = card.interval === 0 ? 1 : card.interval * 2; // Doubler l'intervalle actuel (1 -> 2 -> 4 -> 8 minutes...)
-      const nextReviewTime = Date.now() + nextInterval * 60000; // Calculer le moment du prochain réexamen (en millisecondes)
+
+      const nextInterval = card.interval === 0 ? 1 : card.interval * 2; 
+      const nextReviewTime = Date.now() + nextInterval * 60000; 
       const updatedCard = { ...card, interval: nextInterval, nextReviewTime };
-      
-      // Mettre à jour la carte dans le localStorage
       const updatedCards = cards.map(c => c.id === card.id ? updatedCard : c);
-      localStorage.setItem('cards', JSON.stringify(updatedCards)); // Sauvegarder dans le localStorage
+
+      localStorage.setItem('cards', JSON.stringify(updatedCards));
       onUpdateCards(updatedCards);
 
       // Afficher le temps dans la console
+
       console.log(`Carte mise à jour : ${card.question}, Prochain réexamen dans ${nextInterval} minutes.`);
       alert('✅ Bonne réponse !');
     } else {
+
       // Réponse incorrecte, réinitialiser la carte
+
       const resetUpdatedCard = resetCard(card);
       const updatedCards = cards.map(c => c.id === card.id ? resetUpdatedCard : c);
       localStorage.setItem('cards', JSON.stringify(updatedCards)); // Sauvegarder dans le localStorage

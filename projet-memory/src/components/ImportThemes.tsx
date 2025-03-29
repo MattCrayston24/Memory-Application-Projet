@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { fetchThemes } from '../api/api'; // Appel API pour récupérer les thèmes
+import { fetchThemes } from '../api/api'; 
 
 const ImportThemes = () => {
-  const [themes, setThemes] = useState<any[]>([]); // Liste des thèmes à importer
+  const [themes, setThemes] = useState<any[]>([]); 
 
   useEffect(() => {
     const loadThemes = async () => {
@@ -25,7 +25,7 @@ const ImportThemes = () => {
           <li key={theme.id}>
             <h4>{theme.name}</h4>
             <p>{theme.description}</p>
-            <button>Importer</button> {/* Ajoute ici la logique d'importation */}
+            <button>Importer</button> 
           </li>
         ))}
       </ul>

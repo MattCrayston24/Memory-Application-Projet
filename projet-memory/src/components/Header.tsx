@@ -14,6 +14,7 @@ const Header = () => {
   });
 
   // Fonction pour récupérer les cartes à réviser depuis le localStorage
+  
   const getCardsToReview = () => {
     const storedData = localStorage.getItem('cards');
     if (!storedData) return;
@@ -24,13 +25,11 @@ const Header = () => {
       nextReviewTime: number;
     }[];
 
-    // Filtrer les cartes prêtes à être révisées
     const now = Date.now();
     const cardsToReview = cards.filter(
       (card) => card.nextReviewTime <= now
     );
 
-    // Regrouper par catégorie
     const groupedByCategory = cardsToReview.reduce(
       (acc: Record<string, number>, card) => {
         acc[card.category] = (acc[card.category] || 0) + 1;
@@ -39,7 +38,6 @@ const Header = () => {
       {}
     );
 
-    // Mettre à jour le state avec le regroupement par catégorie
     const groupedData = Object.entries(groupedByCategory).map(
       ([category, count]) => ({
         category,
@@ -51,6 +49,7 @@ const Header = () => {
   };
 
   // Fonction pour programmer la notification
+
   const scheduleNotification = () => {
     const [hours, minutes] = notificationTime.split(':').map(Number);
     const now = new Date();
@@ -59,7 +58,6 @@ const Header = () => {
     targetTime.setHours(hours, minutes, 0, 0);
 
     if (now > targetTime) {
-      // Si l'heure est déjà passée aujourd'hui, programmer pour le lendemain
       targetTime.setDate(targetTime.getDate() + 1);
     }
 
@@ -69,6 +67,7 @@ const Header = () => {
       getCardsToReview();
 
       // Vérification des permissions de notification
+
       if (Notification.permission === 'granted') {
         const totalCards = cardsToReview.reduce((total, item) => total + item.count, 0);
         if (totalCards > 0) {
@@ -79,32 +78,33 @@ const Header = () => {
       }
 
       // Reprogrammer en fonction de la fréquence choisie
-      setTimeout(scheduleNotification, notificationFrequency * 24 * 60 * 60 * 1000); // Fréquence en jours
+
+      setTimeout(scheduleNotification, notificationFrequency * 24 * 60 * 60 * 1000); 
     }, timeUntilNextNotification);
   };
 
   useEffect(() => {
+
     // Vérifier la permission pour les notifications
+
     if (Notification.permission !== 'granted') {
       Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
-          scheduleNotification(); // Lancer la première vérification
+          scheduleNotification(); 
         }
       });
     } else {
-      scheduleNotification(); // Si la permission est déjà accordée
+      scheduleNotification(); 
     }
 
     getCardsToReview();
   }, [notificationTime, notificationFrequency]);
 
-  // Toggle du menu burger
   const toggleNav = () => setIsNavOpen((prev) => !prev);
-
-  // Toggle du menu des notifications
   const toggleNotification = () => setIsNotificationOpen((prev) => !prev);
 
   // Fermer le menu au clic à l'extérieur
+  
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -123,17 +123,17 @@ const Header = () => {
     };
   }, []);
 
-  // Fonction pour enregistrer l'heure et la fréquence
+  // Pour enregistrer l'heure et la fréquence
+
   const handleSaveSettings = () => {
     localStorage.setItem('notificationTime', notificationTime);
     localStorage.setItem('notificationFrequency', String(notificationFrequency));
-    scheduleNotification(); // Redémarrer la notification après sauvegarde
+    scheduleNotification();
     alert('Paramètres enregistrés !');
   };
 
   return (
     <header className={`header ${isNavOpen ? 'open' : ''}`}>
-      {/* Bouton Notification */}
       <div className="notification-container">
         <button className="notification-btn" onClick={toggleNotification}>
           Notifs :&nbsp;
@@ -144,7 +144,6 @@ const Header = () => {
           )}
         </button>
 
-        {/* Menu déroulant des notifications */}
         {isNotificationOpen && (
           <div className="notification-dropdown">
             <p>
@@ -157,7 +156,7 @@ const Header = () => {
                 </li>
               ))}
             </ul>
-            {/* Configuration de l'heure et de la fréquence */}
+
             <div className="notification-settings notif">
               <label className='label-head'>Heure de notification :</label>
               <input
@@ -185,11 +184,8 @@ const Header = () => {
         )}
       </div>
 
-      {/* Titre */}
       <div className="container">
         <h1 className="title">Projet Memory</h1>
-
-        {/* Menu burger */}
         <button
           className={`burger-btn ${isNavOpen ? 'open' : ''}`}
           onClick={toggleNav}

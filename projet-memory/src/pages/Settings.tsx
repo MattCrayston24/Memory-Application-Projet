@@ -2,11 +2,11 @@ import './settings.css';
 import { useState, useEffect } from 'react';
 
 const Settings = () => {
-  // Récupérer les données de notification depuis localStorage avec valeurs par défaut
-  const [notifTime, setNotifTime] = useState<string>(''); // Par défaut vide
-  const [notifFrequency, setNotifFrequency] = useState<string>('1'); // Par défaut tous les jours
+  // Initialisation des états pour les paramètres de notification
+  const [notifTime, setNotifTime] = useState<string>('');
+  const [notifFrequency, setNotifFrequency] = useState<string>('1');
 
-  // Récupérer les paramètres stockés au chargement de la page
+  // Récupérer les paramètres stockés dans le localStorage lors du chargement de la page
   useEffect(() => {
     const savedNotifTime = localStorage.getItem('notifTime');
     const savedNotifFrequency = localStorage.getItem('notifFrequency');
@@ -20,13 +20,11 @@ const Settings = () => {
     }
   }, []);
 
-  // Fonction pour sauvegarder les paramètres dans localStorage
+  // Sauvegarder les paramètres dans le localStorage
   const handleSave = () => {
-    // Sauvegarder les paramètres dans localStorage
     localStorage.setItem('notifTime', notifTime);
     localStorage.setItem('notifFrequency', notifFrequency);
 
-    // Log pour vérifier l'enregistrement dans localStorage
     console.log('Données sauvegardées:', { notifTime, notifFrequency });
 
     alert('Paramètres enregistrés!');

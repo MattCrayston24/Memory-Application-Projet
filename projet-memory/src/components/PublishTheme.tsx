@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { publishTheme } from '../api/api'; // Appel API pour publier un thème
+import { publishTheme } from '../api/api'; 
 
 interface PublishThemeProps {
-  onThemePublished: () => void; // Fonction pour mettre à jour la liste des thèmes après publication
+  onThemePublished: () => void;
 }
 
 const PublishTheme = ({ onThemePublished }: PublishThemeProps) => {
@@ -14,11 +14,11 @@ const PublishTheme = ({ onThemePublished }: PublishThemeProps) => {
       const newTheme = {
         name: newThemeName,
         description: newThemeDescription,
-        cards: [], // Les cartes seront ajoutées après
+        cards: [], 
       };
       try {
-        await publishTheme(newTheme); // Appel à l'API pour publier un thème
-        onThemePublished(); // Met à jour les thèmes après publication
+        await publishTheme(newTheme); 
+        onThemePublished(); 
         setNewThemeName('');
         setNewThemeDescription('');
       } catch (error) {

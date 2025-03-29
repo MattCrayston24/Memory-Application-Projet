@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Cards from './Cards'; // Vérifiez que Cards est correctement importé
+import Cards from './Cards'; 
 import './themes.css';
 
 export interface Card {
@@ -15,7 +15,7 @@ export interface Theme {
   name: string;
   description: string;
   cards: Card[];
-  backgroundImage?: string;  // Le fond qui peut être personnalisé
+  backgroundImage?: string; 
 }
 
 interface ThemesProps {
@@ -24,7 +24,7 @@ interface ThemesProps {
   onAddFlashcard: (themeId: number) => void;
 }
 
-const DEFAULT_BACKGROUND = '/images/default-theme-bg.jpg'; // ✅ Fond par défaut
+const DEFAULT_BACKGROUND = '/images/default-theme-bg.jpg'; 
 
 const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
   const [editingThemeId, setEditingThemeId] = useState<number | null>(null);
@@ -33,13 +33,15 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
   const [backgroundSelectionInProgress, setBackgroundSelectionInProgress] = useState<{ [key: number]: boolean }>({});
   const [tempBackgroundImage, setTempBackgroundImage] = useState<{ [key: number]: string | null }>({});
 
-  // ✅ Suppression d'un thème
+  // Suppression d'un thème
+
   const handleThemeDelete = (id: number) => {
     const newThemes = themes.filter(theme => theme.id !== id);
     onUpdateThemes(newThemes);
   };
 
-  // ✅ Édition d'un thème
+  // Édition d'un thème
+
   const handleThemeEdit = (themeId: number) => {
     const theme = themes.find(t => t.id === themeId);
     if (theme) {
@@ -49,7 +51,8 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
     }
   };
 
-  // ✅ Enregistrement des modifications d'un thème
+  // Enregistrement des modifications d'un thème
+
   const handleThemeSave = (id: number) => {
     const newThemes = themes.map(theme => {
       if (theme.id === id) {
@@ -61,7 +64,8 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
     setEditingThemeId(null);
   };
 
-  // ✅ Mise à jour des cartes dans un thème
+  // Mise à jour des cartes dans un thème
+
   const handleUpdateCards = (themeId: number, newCards: Card[]) => {
     const newThemes = themes.map(theme => {
       if (theme.id === themeId) {
@@ -72,7 +76,8 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
     onUpdateThemes(newThemes);
   };
 
-  // ✅ Personnalisation du fond du thème (via le bouton "Personnaliser")
+  // Personnalisation du fond du thème (via le bouton "Personnaliser")
+
   const handleBackgroundChange = (themeId: number, file: File) => {
     const reader = new FileReader();
 
@@ -80,34 +85,33 @@ const Themes = ({ themes, onUpdateThemes, onAddFlashcard }: ThemesProps) => {
       const result = reader.result as string;
       setTempBackgroundImage(prev => ({
         ...prev,
-        [themeId]: result // Stocke l'image temporaire
+        [themeId]: result
       }));
 
-      // ✅ Masquer le sélecteur après sélection d'un fichier
       setBackgroundSelectionInProgress(prev => ({ ...prev, [themeId]: false }));
     };
 
     reader.readAsDataURL(file);
   };
 
-  // ✅ Réinitialiser le fond du thème
+  // Réinitialiser le fond du thème
+
   const resetBackground = (themeId: number) => {
     setTempBackgroundImage(prev => {
       const updated = { ...prev };
-      delete updated[themeId]; // Supprimer l'image temporaire
+      delete updated[themeId]; 
       return updated;
     });
 
     setBackgroundSelectionInProgress(prev => ({ ...prev, [themeId]: false }));
   };
 
-  // ✅ Gérer l'action du bouton Personnaliser
+  // Gérer l'action du bouton Personnaliser
+
   const handlePersonalizeClick = (themeId: number) => {
     if (!backgroundSelectionInProgress[themeId]) {
-      // Si la personnalisation n'est pas en cours, ouvrir le sélecteur de fichier
       setBackgroundSelectionInProgress(prev => ({ ...prev, [themeId]: true }));
     } else {
-      // Si un fichier a été sélectionné, demander à l'utilisateur de réinitialiser ou de garder
       resetBackground(themeId);
     }
   };

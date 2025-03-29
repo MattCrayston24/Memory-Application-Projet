@@ -1,6 +1,5 @@
-/* /src/components/themes.css */
+/* themes.css */
 
-/* Conteneur principal des thèmes */
 .themes-container {
   display: flex;
   flex-direction: column;
@@ -8,7 +7,6 @@
   margin-top: 20px;
 }
 
-/* Style de chaque thème */
 .theme {
   background: #ffffff;
   border-radius: 10px;
@@ -22,7 +20,6 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* En-tête du thème (tout en ligne) */
 .theme-header {
   display: flex;
   flex-direction: column;
@@ -32,7 +29,6 @@
   text-align: left;
 }
 
-/* Titre du thème en bleu */
 .theme-header h2 {
   font-size: 1.6rem;
   color: #1e3a8a;
@@ -45,7 +41,6 @@
   transition: background 0.3s ease;
 }
 
-/* Description du thème */
 .theme-header p {
   font-size: 1rem;
   color: #242424;
@@ -62,11 +57,10 @@
   margin: 0;
   flex: 1;
   padding: 2%;
-  word-wrap: break-word; /* Permet au texte de passer à la ligne */
+  word-wrap: break-word; 
   white-space: normal;
 }
 
-/* Boutons du thème dans une même ligne */
 .theme-header .theme-buttons {
   display: flex;
   gap: 8px;
@@ -91,7 +85,7 @@
   pointer-events: auto;
   z-index: 2;
 }
-/* Bouton Ajouter un thème stylisé */
+
 .btn-add-theme {
   display: block;
   margin: 20px auto;
@@ -111,7 +105,6 @@
   background: #285a91;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .theme-header {
     flex-wrap: wrap;
