@@ -1,45 +1,48 @@
 import './settings.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Settings = () => {
-  const [notifTime, setNotifTime] = useState(localStorage.getItem('notifTime') || '09:00');
-  const [notifFrequency, setNotifFrequency] = useState(localStorage.getItem('notifFrequency') || '1');
+  // Récupérer les données de notification depuis localStorage avec valeurs par défaut
+  const [notifTime, setNotifTime] = useState<string>(''); // Par défaut vide
+  const [notifFrequency, setNotifFrequency] = useState<string>('1'); // Par défaut tous les jours
 
+  // Récupérer les paramètres stockés au chargement de la page
+  useEffect(() => {
+    const savedNotifTime = localStorage.getItem('notifTime');
+    const savedNotifFrequency = localStorage.getItem('notifFrequency');
+
+    if (savedNotifTime) {
+      setNotifTime(savedNotifTime);
+    }
+
+    if (savedNotifFrequency) {
+      setNotifFrequency(savedNotifFrequency);
+    }
+  }, []);
+
+  // Fonction pour sauvegarder les paramètres dans localStorage
   const handleSave = () => {
+    // Sauvegarder les paramètres dans localStorage
     localStorage.setItem('notifTime', notifTime);
     localStorage.setItem('notifFrequency', notifFrequency);
-    alert('Paramètres enregistrés !');
+
+    // Log pour vérifier l'enregistrement dans localStorage
+    console.log('Données sauvegardées:', { notifTime, notifFrequency });
+
+    alert('Paramètres enregistrés!');
   };
 
   return (
     <main className="settings">
       <h1>⚙️ Paramètres</h1>
-      
+
       <section className="setting-section">
         <h2>🔔 Notifications</h2>
-        <div className="setting-item">
-          <label>Heure des notifications :</label>
-          <input 
-            type="time" 
-            value={notifTime} 
-            onChange={(e) => setNotifTime(e.target.value)}
-          />
-        </div>
 
-        <div className="setting-item">
-          <label>Fréquence des notifications :</label>
-          <select 
-            value={notifFrequency} 
-            onChange={(e) => setNotifFrequency(e.target.value)}
-          >
-            <option value="1">Tous les jours</option>
-            <option value="2">Tous les 2 jours</option>
-            <option value="4">Tous les 4 jours</option>
-            <option value="7">Chaque semaine</option>
-          </select>
-        </div>
-
-        <button className="save-btn" onClick={handleSave}>💾 Enregistrer</button>
+        {/* Bouton Modifier pour rediriger vers la section de notifications dans le header */}
+        <button className="modify-btn" onClick={() => window.location.href = '#notifications'}>
+          Modifier Notifications
+        </button>
       </section>
 
       <section className="setting-section">

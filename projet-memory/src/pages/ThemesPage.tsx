@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import PublishTheme from '../components/PublishTheme'; // Formulaire pour publier un thème
-import ImportThemes from '../components/ImportThemes'; // Liste des thèmes à importer
-import { fetchThemes } from '../api/api'; // Appel à l'API pour récupérer les thèmes
+import PublishTheme from '../components/PublishTheme';
+import ImportThemes from '../components/ImportThemes';
+import { fetchThemes } from '../api/api';
+import './themespage.css';
 
 interface Theme {
   id: string;
@@ -11,43 +12,44 @@ interface Theme {
 }
 
 const ThemesPage = () => {
-  const [themes, setThemes] = useState<Theme[]>([]); // Liste des thèmes publiés
-  const [loading, setLoading] = useState<boolean>(false); // État de chargement
-  const [error, setError] = useState<string | null>(null); // État pour les erreurs
+  const [themes, setThemes] = useState<Theme[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Charger les thèmes depuis l'API
+  // Charger les thèmes depuis l'API au moment où le composant se charge
+
   useEffect(() => {
     const loadThemes = async () => {
-      setLoading(true); // Démarre le chargement
+      setLoading(true);
       try {
         const fetchedThemes = await fetchThemes();
         setThemes(fetchedThemes);
-        setError(null); // Réinitialise l'erreur
+        setError(null);
       } catch (error) {
         setError("Erreur lors de la récupération des thèmes");
         console.error("Erreur lors de la récupération des thèmes", error);
       } finally {
-        setLoading(false); // Arrête le chargement
+        setLoading(false);
       }
     };
 
     loadThemes();
   }, []);
 
-  // Fonction pour mettre à jour la liste des thèmes après publication
+  // Mettre à jour la liste des thèmes après publication d'un nouveau thème
+
   const handleThemePublished = () => {
-    // Rafraîchir la liste des thèmes après publication
     const loadThemes = async () => {
-      setLoading(true); // Démarre le chargement
+      setLoading(true);
       try {
         const fetchedThemes = await fetchThemes();
         setThemes(fetchedThemes);
-        setError(null); // Réinitialise l'erreur
+        setError(null);
       } catch (error) {
         setError("Erreur lors de la récupération des thèmes");
         console.error("Erreur lors de la récupération des thèmes", error);
       } finally {
-        setLoading(false); // Arrête le chargement
+        setLoading(false);
       }
     };
 
@@ -56,24 +58,25 @@ const ThemesPage = () => {
 
   return (
     <div className="themes-page">
-      <h1>Gestion des Thèmes</h1>
+      <h1>🎨 Gestion des Thèmes</h1>
 
-      <PublishTheme onThemePublished={handleThemePublished} /> {/* Formulaire de publication */}
-      <ImportThemes /> {/* Liste des thèmes à importer */}
+      <section className="publish-import-section">
+        <PublishTheme onThemePublished={handleThemePublished} />
+        <ImportThemes />
+      </section>
 
-      {loading && <p>Chargement des thèmes...</p>} {/* Affiche le message de chargement */}
-      {error && <p>{error}</p>} {/* Affiche l'erreur s'il y en a */}
+      {loading && <p className="loading-message">Chargement des thèmes...</p>}
+      {error && <p className="error-message">{error}</p>}
       
-      <h2>Thèmes publiés</h2>
+      <h2>📚 Thèmes publiés</h2>
       {themes.length === 0 ? (
         <p>Aucun thème publié.</p>
       ) : (
-        <ul>
+        <ul className="themes-list">
           {themes.map((theme) => (
-            <li key={theme.id}>
+            <li key={theme.id} className="theme-item">
               <h3>{theme.name}</h3>
               <p>{theme.description}</p>
-              {/* Ajoute ici une logique d'affichage des cartes ou autres actions */}
             </li>
           ))}
         </ul>

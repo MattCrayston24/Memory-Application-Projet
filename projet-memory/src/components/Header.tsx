@@ -169,7 +169,7 @@ const Header = () => {
 
               <label className='label-head'>Fréquence de notification :</label>
               <select
-                className='time-head'
+              className='time-head'
                 value={notificationFrequency}
                 onChange={(e) => setNotificationFrequency(Number(e.target.value))}
               >
