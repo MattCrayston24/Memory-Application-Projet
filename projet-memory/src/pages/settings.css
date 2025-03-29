@@ -114,3 +114,46 @@ input, select {
 }
 
 /* settings.css */
+
+body.dark-mode {
+    background-color: #1e1e1e;
+    color: #ccc;
+  }
+  
+  .settings {
+    padding: 2rem;
+  }
+  
+  .setting-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  body.dark-mode .setting-section {
+    background-color: #2e2e2e;
+    border-color: #444;
+  }
+  
+  .save-btn, .toggle-dark-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s;
+  }
+  
+  .save-btn:hover, .toggle-dark-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  body.dark-mode label {
+    color: #ffffff;
+  }
+  /* Ajoutez d'autres styles pour l'apparence, responsive, etc. */
+  
