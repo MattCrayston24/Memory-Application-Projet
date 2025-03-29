@@ -155,7 +155,7 @@ const Categories = () => {
         {categories.map(cat => (
           <div key={cat.id} className="category-item">
             <div className="category-header">
-              <h2>{cat.name}</h2>
+              <h2 className='h22'>{cat.name}</h2>
               <div className="category-buttons">
                 <button onClick={() => handleEditCategory(cat.id)}>Éditer</button>
                 <button onClick={() => handleDeleteCategory(cat.id)}>Supprimer</button>
