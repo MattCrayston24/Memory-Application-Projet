@@ -36,11 +36,7 @@ const Settings = () => {
 
       <section className="setting-section">
         <h2>🔔 Notifications</h2>
-
-        {/* Bouton Modifier pour rediriger vers la section de notifications dans le header */}
-        <button className="modify-btn" onClick={() => window.location.href = '#notifications'}>
-          Modifier Notifications
-        </button>
+        <p>Votre bouton en haut à gauche de la page vous permet de visualiser toutes les cartes à réviser, de plus vous pouvez modifier les moments où vous souhaitez avoir ces notifications et à quelle fréquence !</p>
       </section>
 
       <section className="setting-section">

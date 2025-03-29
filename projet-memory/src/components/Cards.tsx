@@ -7,8 +7,8 @@ export interface Card {
   answer: string;
   interval: number;
   nextReviewTime: number;
-  mediaUrl?: string; // URL du fichier média (photo, vidéo ou audio) en base64
-  mediaType?: 'image' | 'video' | 'audio'; // Type du fichier média
+  mediaUrl?: string;
+  mediaType?: 'image' | 'video' | 'audio';
 }
 
 interface CardsProps {
@@ -42,7 +42,6 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
       const nextReviewTime = Date.now() + nextInterval * 60000;
       const updatedCard = { ...card, interval: nextInterval, nextReviewTime };
       const updatedCards = cards.map(c => c.id === card.id ? updatedCard : c);
-
       localStorage.setItem('cards', JSON.stringify(updatedCards));
       onUpdateCards(updatedCards);
       alert('✅ Bonne réponse !');
@@ -61,7 +60,7 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
     onUpdateCards(updatedCards);
   };
 
-  // Lire le fichier en base64 pour que le média soit persistant
+  // Lire le fichier en base64 pour persister le média
   const handleAddMedia = (id: number, mediaFile: File, mediaType: 'image' | 'video' | 'audio') => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -91,36 +90,31 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
             <div className="card-front">
               <p><strong>Révision Card</strong></p>
               <p>Question : {card.question}</p>
-
-              {/* Bouton "Contenu" pour ajouter un média */}
               {!card.mediaUrl && !isAddingMedia && (
                 <button className="add-content-btn" onClick={() => setIsAddingMedia(card.id)}>
                   Ajouter un contenu
                 </button>
               )}
-
-              {/* Affichage du média ajouté */}
               {card.mediaUrl && (
                 <div className="media-container">
                   {card.mediaType === 'image' && (
                     <img src={card.mediaUrl} alt="Média" className="media" />
                   )}
                   {card.mediaType === 'video' && (
-                    <video controls className="media" preload="metadata">
+                    <video controls className="media" preload="auto">
                       <source src={card.mediaUrl} type="video/mp4" />
                       Votre navigateur ne supporte pas la vidéo.
                     </video>
                   )}
+
                   {card.mediaType === 'audio' && (
-                    <audio controls className="media" preload="metadata">
+                    <audio controls className="media" preload="none">
                       <source src={card.mediaUrl} type="audio/mpeg" />
                       Votre navigateur ne supporte pas l'audio.
                     </audio>
                   )}
                 </div>
               )}
-
-              {/* Formulaire pour ajouter un fichier multimédia */}
               {isAddingMedia === card.id && (
                 <div className="media-upload">
                   <input
@@ -138,7 +132,6 @@ const Cards = ({ cards, onUpdateCards }: CardsProps) => {
                 </div>
               )}
             </div>
-
             <div className="card-back">
               <p><strong>Réponse :</strong> {card.answer}</p>
               <input
