@@ -40,15 +40,16 @@
 }
 
 .title {
+  margin: 0 auto;
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.8rem; 
+  font-size: 1.8rem;
   font-weight: 700;
   text-transform: uppercase;
   color: #e0e0e0;
   white-space: nowrap;
+  will-change: transform; /* Ajouté */
 }
+
 
 .nav-menu {
   position: absolute;
@@ -258,7 +259,6 @@
   }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .notification-btn { 
     width: 80px;   
